@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/light_gray">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/forest_green">
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Admin Dashboard"
+                    android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                    android:textColor="@color/white"
+                    android:textStyle="bold" />
+                <ImageView
+                    android:id="@+id/btn_logout"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginEnd="16dp"
+                    android:src="@android:drawable/ic_lock_power_off"
+                    app:tint="@color/white" />
+            </LinearLayout>
+        </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- KPI Cards Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:baselineAligned="false"
+                android:orientation="horizontal">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="2dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="12dp">
+                        <TextView 
+                            android:layout_width="wrap_content" 
+                            android:layout_height="wrap_content" 
+                            android:text="Total Open Reports" 
+                            android:textSize="12sp" 
+                            android:textStyle="bold"
+                            android:textColor="@color/black"/>
+                        <TextView 
+                            android:id="@+id/total_open_text"
+                            android:layout_width="wrap_content" 
+                            android:layout_height="wrap_content" 
+                            android:text="0" 
+                            android:textSize="28sp" 
+                            android:textColor="@color/forest_green" 
+                            android:textStyle="bold"/>
+                        <View android:layout_width="match_parent" android:layout_height="40dp" android:layout_marginTop="8dp" android:background="#E0F2F1"/>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="2dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="12dp">
+                        <TextView 
+                            android:layout_width="wrap_content" 
+                            android:layout_height="wrap_content" 
+                            android:text="Avg. Resolution Time" 
+                            android:textSize="12sp" 
+                            android:textStyle="bold"
+                            android:textColor="@color/black"/>
+                        <TextView 
+                            android:id="@+id/avg_resolution_text"
+                            android:layout_width="wrap_content" 
+                            android:layout_height="wrap_content" 
+                            android:text="1.2d" 
+                            android:textSize="28sp" 
+                            android:textColor="@color/forest_green" 
+                            android:textStyle="bold"/>
+                        <View android:layout_width="match_parent" android:layout_height="40dp" android:layout_marginTop="8dp" android:background="#E0F2F1"/>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Issue Heatmap"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:textAppearance="@style/TextAppearance.Material3.TitleSmall"/>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:layout_marginTop="8dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp">
+                <View 
+                    android:layout_width="match_parent" 
+                    android:layout_height="match_parent" 
+                    android:background="#F5F5F5"/>
+                <ImageView 
+                    android:layout_width="match_parent" 
+                    android:layout_height="match_parent" 
+                    android:padding="16dp"
+                    android:src="@android:drawable/ic_menu_sort_by_size" 
+                    android:alpha="0.2" 
+                    android:scaleType="fitXY"
+                    app:tint="@color/forest_green"/>
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Reports by Category"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:textAppearance="@style/TextAppearance.Material3.TitleSmall"/>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="20dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp">
+                <LinearLayout
+                    android:id="@+id/chart_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="bottom"
+                    android:orientation="horizontal"
+                    android:padding="16dp">
+                    <!-- Dynamic bars will be handled here or kept as placeholders for demo -->
+                    <View android:id="@+id/bar_1" android:layout_width="0dp" android:layout_height="10dp" android:layout_weight="1" android:layout_margin="4dp" android:background="@color/forest_green"/>
+                    <View android:id="@+id/bar_2" android:layout_width="0dp" android:layout_height="10dp" android:layout_weight="1" android:layout_margin="4dp" android:background="@color/forest_green"/>
+                    <View android:id="@+id/bar_3" android:layout_width="0dp" android:layout_height="10dp" android:layout_weight="1" android:layout_margin="4dp" android:background="@color/forest_green"/>
+                    <View android:id="@+id/bar_4" android:layout_width="0dp" android:layout_height="10dp" android:layout_weight="1" android:layout_margin="4dp" android:background="@color/forest_green"/>
+                    <View android:id="@+id/bar_5" android:layout_width="0dp" android:layout_height="10dp" android:layout_weight="1" android:layout_margin="4dp" android:background="@color/forest_green"/>
+                    <View android:id="@+id/bar_6" android:layout_width="0dp" android:layout_height="10dp" android:layout_weight="1" android:layout_margin="4dp" android:background="@color/forest_green"/>
+                    <View android:id="@+id/bar_7" android:layout_width="0dp" android:layout_height="10dp" android:layout_weight="1" android:layout_margin="4dp" android:background="@color/forest_green"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Recent Reports"
+                android:textStyle="bold"
+                android:textAppearance="@style/TextAppearance.Material3.TitleSmall"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_all_reports"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:nestedScrollingEnabled="false" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

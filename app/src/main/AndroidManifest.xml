@@ -11,15 +11,22 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.CampusAlert">
+        
         <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".StudentDashboardActivity" />
+        <activity android:name=".ReportSubmissionActivity" />
+        <activity android:name=".ReportDetailActivity" />
+        <activity android:name=".MaintenanceDashboardActivity" />
+        <activity android:name=".AdminAnalyticsActivity" />
+
     </application>
 
 </manifest>

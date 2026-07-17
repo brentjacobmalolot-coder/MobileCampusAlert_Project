@@ -2,4 +2,17 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- CampusAlert Palette -->
+    <color name="forest_green">#2D5A27</color>
+    <color name="sage_green">#A3B18A</color>
+    <color name="light_gray">#F8F9FA</color>
+    <color name="soft_sage">#DDE5B6</color>
+
+    <color name="primary">@color/forest_green</color>
+    <color name="onPrimary">@color/white</color>
+    <color name="secondary">@color/sage_green</color>
+    <color name="onSecondary">@color/black</color>
+    <color name="background">@color/light_gray</color>
+    <color name="surface">@color/white</color>
 </resources>

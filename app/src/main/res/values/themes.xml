@@ -1,9 +1,30 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.CampusAlert" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorOnPrimary">@color/onPrimary</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/secondary</item>
+        <item name="colorOnSecondary">@color/onSecondary</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">?attr/colorPrimary</item>
+        <!-- Background/Surface colors. -->
+        <item name="android:windowBackground">@color/background</item>
+        <item name="colorSurface">@color/surface</item>
+        
+        <!-- Shape appearance -->
+        <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.CampusAlert.Large</item>
+        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.CampusAlert.Medium</item>
     </style>
 
     <style name="Theme.CampusAlert" parent="Base.Theme.CampusAlert" />
+
+    <style name="ShapeAppearance.CampusAlert.Large" parent="ShapeAppearance.Material3.LargeComponent">
+        <item name="cornerSize">16dp</item>
+    </style>
+    
+    <style name="ShapeAppearance.CampusAlert.Medium" parent="ShapeAppearance.Material3.MediumComponent">
+        <item name="cornerSize">12dp</item>
+    </style>
 </resources>
