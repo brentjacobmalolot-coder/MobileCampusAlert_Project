@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -12,11 +13,18 @@ import com.example.campusalert.models.Report;
 import com.example.campusalert.models.UserRole;
 import com.example.campusalert.utils.SessionManager;
 import com.example.campusalert.viewmodels.ReportViewModel;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
-public class ReportSubmissionActivity extends AppCompatActivity {
+public class ReportSubmissionActivity extends AppCompatActivity implements OnMapReadyCallback {
     private ActivityReportSubmissionBinding binding;
     private ReportViewModel reportViewModel;
     private SessionManager sessionManager;
+    private GoogleMap mMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +44,7 @@ public class ReportSubmissionActivity extends AppCompatActivity {
         setupToolbar();
         setupDropdowns();
         setupListeners();
+        setupMap();
     }
 
     private void setupToolbar() {
@@ -46,7 +55,7 @@ public class ReportSubmissionActivity extends AppCompatActivity {
     }
 
     private void setupDropdowns() {
-        String[] buildings = {"St. Therese Bldg", "Sports Complex", "Library", "Engineering Hall", "Student Center"};
+        String[] buildings = {"St. Therese Bldg", "Sports Complex", "Library", "Engineering Hall", "Student Center", "SCC Gym"};
         ArrayAdapter<String> buildingAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, buildings);
         binding.buildingDropdown.setAdapter(buildingAdapter);
 
@@ -59,19 +68,41 @@ public class ReportSubmissionActivity extends AppCompatActivity {
         binding.submitButton.setOnClickListener(v -> submitReport());
     }
 
+    private void setupMap() {
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map_fragment);
+        if (mapFragment != null) {
+            mapFragment.getMapAsync(this);
+        }
+    }
+
+    @Override
+    public void onMapReady(@NonNull GoogleMap googleMap) {
+        mMap = googleMap;
+
+        // Default location (e.g., School Campus Coordinates)
+        LatLng schoolLocation = new LatLng(7.8289, 123.4339); // Example coordinates
+        mMap.addMarker(new MarkerOptions().position(schoolLocation).title("SCC Campus"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(schoolLocation, 17f));
+        
+        mMap.setOnMapClickListener(latLng -> {
+            mMap.clear();
+            mMap.addMarker(new MarkerOptions().position(latLng).title("Selected Location"));
+        });
+    }
+
     private void submitReport() {
         String building = binding.buildingDropdown.getText().toString();
         String category = binding.categoryDropdown.getText().toString();
         String description = binding.descriptionEdit.getText().toString().trim();
         
-        // Get Priority from Toggle Group
-        String priority = "Medium"; // Default
+        String priority = "Medium";
         int checkedId = binding.priorityToggleGroup.getCheckedButtonId();
         if (checkedId == R.id.btn_low) priority = "Low";
         else if (checkedId == R.id.btn_high) priority = "High";
 
         if (building.isEmpty() || category.isEmpty() || description.isEmpty()) {
-            Toast.makeText(this, R.string.fill_all_fields, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please fill all required fields", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -87,7 +118,7 @@ public class ReportSubmissionActivity extends AppCompatActivity {
         );
 
         reportViewModel.insert(report);
-        Toast.makeText(this, R.string.report_submitted, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Report submitted successfully", Toast.LENGTH_SHORT).show();
         finish();
     }
 

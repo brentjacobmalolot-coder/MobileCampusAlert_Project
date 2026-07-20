@@ -4,9 +4,7 @@ plugins {
 
 android {
     namespace = "com.example.campusalert"
-    compileSdk {
-        version = release(36)
-    }
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.campusalert"
@@ -53,6 +51,9 @@ dependencies {
 
     // Security
     implementation(libs.security.crypto)
+
+    // Maps
+    implementation(libs.play.services.maps)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

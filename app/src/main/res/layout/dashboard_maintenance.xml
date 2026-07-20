@@ -3,57 +3,65 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/light_gray">
+    android:background="#F8F9FA">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/forest_green">
+        android:background="@color/forest_green"
+        app:elevation="0dp">
+
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize">
-            <LinearLayout
+            android:layout_height="?attr/actionBarSize"
+            app:contentInsetStart="0dp">
+
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:paddingHorizontal="16dp">
+
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
+                    android:layout_centerVertical="true"
                     android:src="@android:drawable/ic_menu_sort_by_size"
                     app:tint="@color/white" />
+
                 <TextView
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_weight="1"
-                    android:text="@string/maintenance"
+                    android:layout_centerInParent="true"
+                    android:text="Maintenance"
                     android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
                     android:textColor="@color/white"
                     android:textStyle="bold" />
+
                 <ImageView
                     android:id="@+id/btn_logout"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:layout_marginEnd="16dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
                     android:src="@android:drawable/ic_lock_power_off"
-                    android:contentDescription="@string/logout"
                     app:tint="@color/white" />
-            </LinearLayout>
+            </RelativeLayout>
         </androidx.appcompat.widget.Toolbar>
-        
+
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tab_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/forest_green"
             app:tabIndicatorColor="@color/white"
+            app:tabIndicatorHeight="3dp"
             app:tabSelectedTextColor="@color/white"
             app:tabTextColor="#BDBDBD">
-            <com.google.android.material.tabs.TabItem android:text="@string/assigned" />
-            <com.google.android.material.tabs.TabItem android:text="@string/in_progress" />
-            <com.google.android.material.tabs.TabItem android:text="@string/completed" />
+
+            <com.google.android.material.tabs.TabItem android:text="Assigned" />
+            <com.google.android.material.tabs.TabItem android:text="In Progress" />
+            <com.google.android.material.tabs.TabItem android:text="Completed" />
         </com.google.android.material.tabs.TabLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -72,14 +80,24 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp">
+                android:layout_marginBottom="16dp">
+
                 <TextView
                     android:id="@+id/text_task_count"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Tasks"
-                    android:textStyle="bold"
-                    android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
+                    android:text="Assigned (8)"
+                    android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                    android:textColor="@color/black"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:text="View all"
+                    android:textColor="@color/forest_green"
+                    android:textStyle="bold" />
             </RelativeLayout>
 
             <androidx.recyclerview.widget.RecyclerView
