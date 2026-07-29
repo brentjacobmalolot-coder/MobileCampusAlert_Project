@@ -8,6 +8,10 @@
     <color name="sage_green">#A3B18A</color>
     <color name="light_gray">#F8F9FA</color>
     <color name="soft_sage">#DDE5B6</color>
+    
+    <!-- Added Yellow/Amber for status and accents -->
+    <color name="institutional_yellow">#FFB300</color>
+    <color name="soft_yellow">#FFF8E1</color>
 
     <color name="primary">@color/forest_green</color>
     <color name="onPrimary">@color/white</color>

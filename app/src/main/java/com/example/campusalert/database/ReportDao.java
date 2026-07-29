@@ -39,7 +39,7 @@ public interface ReportDao {
     @Query("SELECT category, COUNT(*) as count FROM reports GROUP BY category")
     LiveData<List<CategoryCount>> getReportsByCategory();
 
-    static class CategoryCount {
+    public static class CategoryCount {
         public String category;
         public int count;
     }

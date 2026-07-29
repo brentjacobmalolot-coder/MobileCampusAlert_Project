@@ -109,6 +109,7 @@
                         app:boxCornerRadiusTopStart="16dp"
                         app:boxStrokeColor="@color/forest_green"
                         app:hintTextColor="@color/forest_green"
+                        app:startIconDrawable="@android:drawable/ic_dialog_email"
                         app:startIconTint="@color/forest_green">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -116,8 +117,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="textEmailAddress"
-                            android:paddingStart="8dp"
-                            android:paddingEnd="8dp"
+                            android:paddingStart="48dp"
+                            android:paddingEnd="16dp"
                             android:textColor="@color/black" />
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -137,6 +138,7 @@
                         app:hintTextColor="@color/forest_green"
                         app:passwordToggleEnabled="true"
                         app:passwordToggleTint="@color/forest_green"
+                        app:startIconDrawable="@android:drawable/ic_lock_idle_lock"
                         app:startIconTint="@color/forest_green">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -144,8 +146,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="textPassword"
-                            android:paddingStart="8dp"
-                            android:paddingEnd="8dp"
+                            android:paddingStart="48dp"
+                            android:paddingEnd="16dp"
                             android:textColor="@color/black" />
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -175,7 +177,7 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Prominent Overlapping Circular Logo -->
+            <!-- Adjusted Circular Logo Container -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/logo_card"
                 android:layout_width="140dp"
@@ -183,7 +185,7 @@
                 app:cardCornerRadius="70dp"
                 app:cardElevation="20dp"
                 app:strokeColor="@color/white"
-                app:strokeWidth="6dp"
+                app:strokeWidth="3dp"
                 app:layout_constraintBottom_toTopOf="@id/login_card"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -192,9 +194,9 @@
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:padding="12dp"
                     android:scaleType="centerInside"
                     android:src="@mipmap/scc_newlogo2_background"
-                    android:padding="8dp"
                     android:contentDescription="@string/app_name" />
             </com.google.android.material.card.MaterialCardView>
 

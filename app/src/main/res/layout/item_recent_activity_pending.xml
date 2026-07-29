@@ -3,53 +3,81 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="8dp"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="2dp">
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginVertical="8dp"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="4dp"
+    app:strokeWidth="1dp"
+    app:strokeColor="#F5F5F5"
+    app:cardBackgroundColor="@color/white">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:padding="12dp">
+        android:padding="16dp">
 
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@android:drawable/ic_menu_info_details"
-            app:tint="@color/forest_green" />
+        <!-- Status Icon Container with Tonal Background -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            app:cardCornerRadius="14dp"
+            app:cardBackgroundColor="#FFF8E1"
+            app:cardElevation="0dp"
+            app:strokeWidth="0dp">
+            <ImageView
+                android:id="@+id/status_icon"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:layout_gravity="center"
+                android:src="@android:drawable/ic_dialog_info"
+                app:tint="#FFB300" />
+        </com.google.android.material.card.MaterialCardView>
 
+        <!-- Information Column -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
+            android:layout_marginStart="16dp"
             android:layout_weight="1"
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/report_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="My Active Reports"
-                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
+                android:textColor="@color/forest_green"
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/report_building"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Reports to facilities reports..."
-                android:textAppearance="@style/TextAppearance.Material3.BodySmall" />
+                android:text="Waiting for maintenance assignment"
+                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+                android:textColor="@color/sage_green"
+                android:layout_marginTop="2dp" />
         </LinearLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_pill_pending"
-            android:paddingHorizontal="12dp"
-            android:paddingVertical="4dp"
-            android:text="Pending"
-            android:textColor="#856404"
-            android:textStyle="bold"
-            android:textSize="10sp" />
+        <!-- Dynamic Status/Action Button (Matching Admin UI) -->
+        <!-- We use ID status_pill so it stays compatible with existing ReportAdapter -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/status_pill"
+            style="@style/Widget.Material3.Button.IconButton.Filled"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:insetLeft="0dp"
+            android:insetTop="0dp"
+            android:insetRight="0dp"
+            android:insetBottom="0dp"
+            app:icon="@android:drawable/ic_media_play"
+            app:iconSize="20dp"
+            app:iconTint="@color/white"
+            app:backgroundTint="@color/forest_green"
+            app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full" />
+
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

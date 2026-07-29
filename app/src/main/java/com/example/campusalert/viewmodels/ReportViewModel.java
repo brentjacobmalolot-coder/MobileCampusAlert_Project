@@ -6,7 +6,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import com.example.campusalert.database.ReportRepository;
 import com.example.campusalert.models.Report;
-import com.example.campusalert.models.ReportDao;
+import com.example.campusalert.database.ReportDao;
 import java.util.List;
 
 public class ReportViewModel extends AndroidViewModel {

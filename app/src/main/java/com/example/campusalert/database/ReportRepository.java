@@ -3,7 +3,6 @@ package com.example.campusalert.database;
 import android.app.Application;
 import androidx.lifecycle.LiveData;
 import com.example.campusalert.models.Report;
-import com.example.campusalert.models.ReportDao;
 import com.example.campusalert.models.User;
 import java.util.List;
 

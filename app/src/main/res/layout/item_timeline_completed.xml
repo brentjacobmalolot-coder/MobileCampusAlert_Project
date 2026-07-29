@@ -1,43 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginVertical="8dp"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="4dp"
+    app:strokeWidth="1dp"
+    app:strokeColor="#F5F5F5"
+    app:cardBackgroundColor="@color/white">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="16dp">
 
-        <TextView
-            android:id="@+id/timeline_datetime"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:text="10/24/2023\n09:30 AM"
-            android:textSize="10sp"
-            android:textColor="#666666" />
+        <!-- Leading Status Icon Container (Completed State) -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            app:cardCornerRadius="14dp"
+            app:cardBackgroundColor="#F1F8E9"
+            app:cardElevation="0dp"
+            app:strokeWidth="0dp">
+            
+            <ImageView
+                android:id="@+id/status_icon"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:layout_gravity="center"
+                android:src="@android:drawable/checkbox_on_background"
+                app:tint="@color/forest_green"
+                android:contentDescription="Completed Status" />
+        </com.google.android.material.card.MaterialCardView>
 
-        <View
-            android:layout_width="12dp"
-            android:layout_height="12dp"
-            android:layout_marginTop="4dp"
-            android:background="@drawable/circle_green" />
-
-        <TextView
-            android:id="@+id/timeline_status"
-            android:layout_width="wrap_content"
+        <!-- Information Column -->
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="Reported"
-            android:textStyle="bold"
-            android:textColor="@color/forest_green"
-            android:textSize="12sp" />
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/timeline_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Completed"
+                android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
+                android:textColor="@color/forest_green"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/timeline_datetime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="10/24/2023 • 09:30 AM"
+                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+                android:textColor="@color/sage_green"
+                android:layout_marginTop="2dp" />
+        </LinearLayout>
+
+        <!-- Trailing Success Badge -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="#E8F5E9"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="0dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="4dp"
+                android:text="DONE"
+                android:textColor="#2E7D32"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+        </com.google.android.material.card.MaterialCardView>
+
     </LinearLayout>
-
-    <View
-        android:layout_width="2dp"
-        android:layout_height="24dp"
-        android:layout_marginStart="85dp"
-        android:background="@color/forest_green" />
-
-</LinearLayout>
+</com.google.android.material.card.MaterialCardView>

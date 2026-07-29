@@ -46,4 +46,21 @@
     <string name="save_updates">Save Updates</string>
     <string name="update_status">Update Status</string>
     <string name="report_id_status">Report ID: %1$s Status</string>
+    <string name="task_count_format">%1$s (%2$d)</string>
+    <string name="campus_background">Campus Background</string>
+    <string name="campus_pulse">Campus Infrastructure Pulse</string>
+    <string name="efficiency_growth">12% Efficiency Growth</string>
+    <string name="mock_total_open">26</string>
+    <string name="active_cases">Active Cases</string>
+    <string name="mock_avg_res">1.2d</string>
+    <string name="avg_resolution">Avg. Resolution</string>
+    <string name="maintenance_trends">Maintenance Trends</string>
+    <string name="trend_viz">Trend Visualization</string>
+    <string name="view_details">View Details</string>
+    <string name="resolved_vs_new">Resolved issues vs. New reports</string>
+    <string name="last_7_days">Last 7 Days</string>
+    <string name="new_label">New</string>
+    <string name="resolved_label">Resolved</string>
+    <string name="infrastructure_submission">Infrastructure Submission</string>
+    <string name="analytic_subtitle">Accurate data helps us resolve issues faster.</string>
 </resources>

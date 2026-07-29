@@ -19,12 +19,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:contentScrim="@color/forest_green"
-            app:expandedTitleMarginBottom="100dp"
-            app:expandedTitleMarginStart="24dp"
-            app:expandedTitleTextAppearance="@style/TextAppearance.Material3.HeadlineLarge"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
-            app:title="New Report"
-            app:titleCollapseMode="fade">
+            app:titleEnabled="false">
 
             <ImageView
                 android:layout_width="match_parent"
@@ -35,7 +31,7 @@
                 app:layout_collapseMode="parallax"
                 app:layout_collapseParallaxMultiplier="0.7" />
 
-            <!-- Sophisticated Scrim Layers for Readability -->
+            <!-- Premium Scrim Layers for Readability -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -48,12 +44,12 @@
                 android:alpha="0.5"
                 android:background="@drawable/bg_gradient_scrim" />
 
-            <!-- Hero Content positioned at the top area for visibility -->
+            <!-- Hero Header Content -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="top"
-                android:layout_marginTop="64dp"
+                android:layout_gravity="bottom"
+                android:layout_marginBottom="140dp"
                 android:orientation="vertical"
                 android:paddingHorizontal="24dp">
 
@@ -61,17 +57,26 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Infrastructure Submission"
-                    android:textAppearance="@style/TextAppearance.Material3.HeadlineMedium"
+                    android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
                     android:textColor="@color/white"
                     android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="4dp"
                     android:text="Accurate data helps us resolve issues faster."
                     android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                     android:textColor="#E0E0E0" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:text="New Report"
+                    android:textAppearance="@style/TextAppearance.Material3.HeadlineLarge"
+                    android:textColor="@color/white"
+                    android:textStyle="bold" />
             </LinearLayout>
 
             <androidx.appcompat.widget.Toolbar
@@ -102,7 +107,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="20dp"
-                android:layout_marginTop="-80dp"
+                android:layout_marginTop="-90dp"
+                app:cardBackgroundColor="@color/white"
                 app:cardCornerRadius="32dp"
                 app:cardElevation="16dp"
                 app:strokeWidth="0dp">
@@ -128,20 +134,28 @@
                         android:layout_marginTop="8dp"
                         android:background="@color/soft_sage" />
 
-                    <!-- Building Selector -->
+                    <!-- Building Selection Section -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="32dp"
+                        android:text="Building Selection"
+                        android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
+                        android:textColor="@color/black"
+                        android:textStyle="bold" />
+
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="32dp"
+                        android:layout_marginTop="8dp"
                         android:layout_marginBottom="16dp"
-                        android:hint="@string/building_selection"
                         app:boxCornerRadiusBottomEnd="16dp"
                         app:boxCornerRadiusBottomStart="16dp"
                         app:boxCornerRadiusTopEnd="16dp"
                         app:boxCornerRadiusTopStart="16dp"
                         app:boxStrokeColor="@color/forest_green"
-                        app:hintTextColor="@color/forest_green"
+                        app:hintEnabled="false"
                         app:startIconDrawable="@android:drawable/ic_menu_myplaces"
                         app:startIconTint="@color/forest_green">
 
@@ -150,23 +164,31 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="none"
-                            android:paddingStart="12dp"
+                            android:paddingStart="60dp"
                             android:textColor="@color/black" />
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <!-- Category Selector -->
+                    <!-- Category Section -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Category"
+                        android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
+                        android:textColor="@color/black"
+                        android:textStyle="bold" />
+
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
                         android:layout_marginBottom="24dp"
-                        android:hint="@string/category"
                         app:boxCornerRadiusBottomEnd="16dp"
                         app:boxCornerRadiusBottomStart="16dp"
                         app:boxCornerRadiusTopEnd="16dp"
                         app:boxCornerRadiusTopStart="16dp"
                         app:boxStrokeColor="@color/forest_green"
-                        app:hintTextColor="@color/forest_green"
+                        app:hintEnabled="false"
                         app:startIconDrawable="@android:drawable/ic_menu_preferences"
                         app:startIconTint="@color/forest_green">
 
@@ -175,7 +197,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="none"
-                            android:paddingStart="12dp"
+                            android:paddingStart="60dp"
                             android:textColor="@color/black" />
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -183,7 +205,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/priority_level"
+                        android:text="Priority Level"
                         android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
                         android:textColor="@color/black"
                         android:textStyle="bold" />
@@ -222,19 +244,29 @@
                             android:text="High" />
                     </com.google.android.material.button.MaterialButtonToggleGroup>
 
-                    <!-- Detailed Description -->
+                    <!-- Issue Description Section -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Description"
+                        android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
+                        android:textColor="@color/black"
+                        android:textStyle="bold" />
+
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
                         android:layout_marginBottom="32dp"
-                        android:hint="@string/description"
                         app:boxCornerRadiusBottomEnd="16dp"
                         app:boxCornerRadiusBottomStart="16dp"
                         app:boxCornerRadiusTopEnd="16dp"
                         app:boxCornerRadiusTopStart="16dp"
                         app:boxStrokeColor="@color/forest_green"
-                        app:hintTextColor="@color/forest_green">
+                        app:hintEnabled="false"
+                        app:startIconDrawable="@android:drawable/ic_menu_edit"
+                        app:startIconTint="@color/forest_green">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/description_edit"
@@ -244,7 +276,7 @@
                             android:hint="Provide a clear description of the issue..."
                             android:inputType="textMultiLine"
                             android:lines="5"
-                            android:paddingStart="12dp"
+                            android:paddingStart="60dp"
                             android:textColor="@color/black" />
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -275,7 +307,7 @@
                             android:layout_height="match_parent" />
                     </com.google.android.material.card.MaterialCardView>
 
-                    <!-- Submission Button -->
+                    <!-- Submission Action -->
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/submit_button"
                         android:layout_width="match_parent"

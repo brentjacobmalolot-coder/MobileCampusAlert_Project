@@ -42,7 +42,7 @@ public class MaintenanceDashboardActivity extends AppCompatActivity {
         setupListeners();
         
         reportViewModel = new ViewModelProvider(this).get(ReportViewModel.class);
-        updateFilter("Assigned");
+        updateFilter(getString(R.string.assigned));
     }
 
     private void setupRecyclerView() {
@@ -63,7 +63,7 @@ public class MaintenanceDashboardActivity extends AppCompatActivity {
                 report.setStatus("Completed");
                 report.setStaffId(sessionManager.getUserEmail());
                 reportViewModel.update(report);
-                Toast.makeText(MaintenanceDashboardActivity.this, R.string.completed, Toast.LENGTH_SHORT).show();
+                Toast.makeText(MaintenanceDashboardActivity.this, R.string.report_updated, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -72,7 +72,10 @@ public class MaintenanceDashboardActivity extends AppCompatActivity {
         binding.tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                updateFilter(tab.getText().toString());
+                CharSequence text = tab.getText();
+                if (text != null) {
+                    updateFilter(text.toString());
+                }
             }
 
             @Override
@@ -93,13 +96,17 @@ public class MaintenanceDashboardActivity extends AppCompatActivity {
 
     private void updateFilter(String status) {
         String dbStatus = status;
-        if (getString(R.string.assigned).equals(status)) dbStatus = "Pending";
-        else if (getString(R.string.in_progress).equals(status)) dbStatus = "In Progress";
-        else if (getString(R.string.completed).equals(status)) dbStatus = "Completed";
+        if (getString(R.string.assigned).equals(status)) {
+            dbStatus = "Pending";
+        } else if (getString(R.string.in_progress).equals(status)) {
+            dbStatus = "In Progress";
+        } else if (getString(R.string.completed).equals(status)) {
+            dbStatus = "Completed";
+        }
 
         reportViewModel.getReportsByStatus(dbStatus).observe(this, reports -> {
             adapter.submitList(reports);
-            binding.textTaskCount.setText(status + " (" + reports.size() + ")");
+            binding.textTaskCount.setText(getString(R.string.task_count_format, status, reports.size()));
         });
     }
 }

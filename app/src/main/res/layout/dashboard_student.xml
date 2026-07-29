@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background">
@@ -43,7 +44,8 @@
                         android:layout_width="22dp"
                         android:layout_height="22dp"
                         android:src="@mipmap/scclogo_foreground"
-                        app:tint="@color/white" />
+                        app:tint="@color/white"
+                        android:contentDescription="@string/app_name" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -55,14 +57,30 @@
                         android:textStyle="bold" />
                 </LinearLayout>
 
-                <ImageView
-                    android:id="@+id/btn_notifications"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:src="@android:drawable/ic_popup_reminder"
-                    app:tint="@color/white" />
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/btn_notifications"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginEnd="12dp"
+                        android:src="@android:drawable/ic_popup_reminder"
+                        app:tint="@color/white"
+                        android:contentDescription="Notifications" />
+
+                    <ImageView
+                        android:id="@+id/btn_logout"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@android:drawable/ic_lock_power_off"
+                        app:tint="@color/white"
+                        android:contentDescription="@string/logout" />
+                </LinearLayout>
 
             </RelativeLayout>
         </com.google.android.material.appbar.MaterialToolbar>
@@ -79,7 +97,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Premium Header with Image and Blurry Green Scrim -->
+            <!-- Premium Header -->
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="160dp">
@@ -88,7 +106,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
-                    android:src="@mipmap/scc_bldg_background" />
+                    android:src="@mipmap/scc_bldg_background"
+                    android:contentDescription="Campus Background" />
 
                 <View
                     android:layout_width="match_parent"
@@ -121,7 +140,7 @@
                 </LinearLayout>
             </FrameLayout>
 
-            <!-- Featured Dashboard Card (Acts Logo Background) - Now part of vertical flow -->
+            <!-- Dashboard Overview Card -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/featured_card"
                 android:layout_width="match_parent"
@@ -140,7 +159,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:scaleType="centerCrop"
-                        android:src="@mipmap/acts_logo_background" />
+                        android:src="@mipmap/acts_logo_background"
+                        android:contentDescription="Portal" />
 
                     <View
                         android:layout_width="match_parent"
@@ -183,49 +203,97 @@
                 </RelativeLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Spacing and Recent Activity -->
+            <!-- Redesigned Activity Section -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingHorizontal="16dp">
+                android:paddingHorizontal="16dp"
+                android:layout_marginTop="28dp">
 
-                <RelativeLayout
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:layout_marginBottom="16dp">
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="12dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="Recent Activity"
-                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-                        android:textColor="@color/black"
-                        android:textStyle="bold" />
+                        android:layout_weight="1"
+                        android:orientation="vertical">
 
-                    <TextView
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Recent Activity"
+                            android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
+                            android:textColor="@color/forest_green"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Your latest infrastructure updates"
+                            android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+                            android:textColor="@color/sage_green" />
+                    </LinearLayout>
+
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_view_all"
+                        style="@style/Widget.Material3.Button.TextButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:text="View all"
+                        android:text="See All"
                         android:textColor="@color/forest_green"
-                        android:textStyle="bold" />
-                </RelativeLayout>
+                        android:textStyle="bold"
+                        app:icon="@android:drawable/ic_menu_send"
+                        app:iconSize="16dp"
+                        app:iconGravity="textEnd" />
+                </LinearLayout>
+
+                <!-- Modern Filter Chips -->
+                <com.google.android.material.chip.ChipGroup
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    app:singleSelection="true">
+
+                    <com.google.android.material.chip.Chip
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="All"
+                        android:checked="true" />
+
+                    <com.google.android.material.chip.Chip
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Pending" />
+
+                    <com.google.android.material.chip.Chip
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="In Progress" />
+
+                </com.google.android.material.chip.ChipGroup>
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recycler_reports"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:nestedScrollingEnabled="false"
-                    android:paddingBottom="100dp" />
+                    android:paddingBottom="100dp"
+                    tools:listitem="@layout/item_report" />
 
             </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <!-- Elevated Centered Report Button -->
+    <!-- Elevated Dynamic Report Button -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/fab_report"
         android:layout_width="wrap_content"
