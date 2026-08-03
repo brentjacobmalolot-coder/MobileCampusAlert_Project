@@ -87,11 +87,11 @@ public class MaintenanceDashboardActivity extends AppCompatActivity {
     }
 
     private void setupListeners() {
-        binding.btnLogout.setOnClickListener(v -> {
-            sessionManager.logout();
-            startActivity(new Intent(this, MainActivity.class));
-            finish();
-        });
+        binding.btnSettings.setOnClickListener(v -> 
+            startActivity(new Intent(this, SettingsActivity.class)));
+            
+        binding.profileImageSmall.setOnClickListener(v -> 
+            startActivity(new Intent(this, SettingsActivity.class)));
     }
 
     private void updateFilter(String status) {

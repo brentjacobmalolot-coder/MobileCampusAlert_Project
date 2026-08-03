@@ -29,12 +29,6 @@
             android:layout_height="match_parent"
             android:background="@drawable/bg_green_scrim"
             android:alpha="0.85" />
-        
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/bg_gradient_scrim"
-            android:alpha="0.4" />
     </FrameLayout>
 
     <!-- Scrollable Content Section -->
@@ -49,11 +43,12 @@
             android:layout_height="wrap_content"
             android:paddingBottom="40dp">
 
-            <!-- Invisible spacer to keep image visible initially and create overlap effect -->
+            <!-- Adjusted spacer height to move content higher up -->
             <View
                 android:id="@+id/top_spacer"
                 android:layout_width="match_parent"
-                android:layout_height="240dp"
+                android:layout_height="180dp"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <!-- Sleek Login Card with Strong Overlap -->
@@ -79,23 +74,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
+                        android:layout_marginBottom="36dp"
                         android:text="Welcome Back"
                         android:textAppearance="@style/TextAppearance.Material3.HeadlineMedium"
                         android:textColor="@color/forest_green"
                         android:textStyle="bold" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="6dp"
-                        android:layout_marginBottom="36dp"
-                        android:text="Secure School Infrastructure Tracking"
-                        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                        android:textColor="@color/sage_green"
-                        android:letterSpacing="0.02" />
-
-                    <!-- Refined Email Input -->
+                    <!-- Email Input -->
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/email_layout"
                         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
@@ -122,7 +107,7 @@
                             android:textColor="@color/black" />
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <!-- Refined Password Input -->
+                    <!-- Password Input -->
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/password_layout"
                         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
@@ -151,7 +136,7 @@
                             android:textColor="@color/black" />
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <!-- High-Contrast Sign In Button -->
+                    <!-- Sign In Button -->
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/sign_in_button"
                         android:layout_width="match_parent"
@@ -164,20 +149,10 @@
                         app:cornerRadius="18dp"
                         app:elevation="8dp" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="32dp"
-                        android:text="@string/powered_by"
-                        android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                        android:textColor="@color/sage_green"
-                        android:alpha="0.7" />
-
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Adjusted Circular Logo Container -->
+            <!-- Circular Logo Container -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/logo_card"
                 android:layout_width="140dp"
@@ -202,5 +177,16 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
+
+    <!-- Loading Indicator -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

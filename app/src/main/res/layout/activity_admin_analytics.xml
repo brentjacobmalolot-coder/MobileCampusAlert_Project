@@ -118,14 +118,24 @@
                     android:paddingEnd="16dp"
                     tools:ignore="RtlSymmetry">
 
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/profile_image_admin"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_centerVertical="true"
+                        android:src="@mipmap/scclogo"
+                        app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
+                        app:strokeColor="@color/white"
+                        app:strokeWidth="1dp" />
+
                     <ImageView
-                        android:id="@+id/btn_logout"
+                        android:id="@+id/btn_settings"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
-                        android:contentDescription="@string/logout"
-                        android:src="@android:drawable/ic_lock_power_off"
+                        android:contentDescription="@string/dropdown_hint"
+                        android:src="@drawable/ic_account_circle"
                         app:tint="@color/white" />
                 </RelativeLayout>
             </androidx.appcompat.widget.Toolbar>
@@ -259,7 +269,7 @@
                 android:orientation="vertical"
                 android:paddingHorizontal="16dp">
 
-                <!-- Maintenance Trends (Issue Heatmap) -->
+                <!-- Maintenance Trends Section with scc_bldg_background -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -270,6 +280,7 @@
                     android:textStyle="bold" />
 
                 <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/trend_card"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
@@ -283,11 +294,9 @@
                         <ImageView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:padding="24dp"
-                            android:src="@android:drawable/ic_menu_sort_by_size"
-                            android:alpha="0.05"
-                            android:scaleType="fitXY"
-                            app:tint="@color/forest_green"
+                            android:src="@mipmap/scc_bldg_background"
+                            android:alpha="0.15"
+                            android:scaleType="centerCrop"
                             android:contentDescription="@string/trend_viz" />
                         <TextView
                             android:layout_width="wrap_content"

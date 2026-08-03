@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "957933761789",
+    "project_id": "appdevdb-a465a",
+    "storage_bucket": "appdevdb-a465a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:957933761789:android:dbaac1daac4246a544fa94",
+        "android_client_info": {
+          "package_name": "com.example.mylog_in"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCiuVIceDfZjt2Pn1yH9r8MzfrJ2jRp03o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

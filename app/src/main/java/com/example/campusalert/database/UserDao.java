@@ -10,7 +10,7 @@ import com.example.campusalert.models.User;
 
 @Dao
 public interface UserDao {
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(User user);
 
     @Query("SELECT * FROM users WHERE email = :email LIMIT 1")

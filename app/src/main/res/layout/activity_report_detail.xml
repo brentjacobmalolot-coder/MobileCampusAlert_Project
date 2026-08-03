@@ -146,11 +146,57 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="The air conditioning unit is making a loud rattling noise and is not cooling the room effectively since this morning."
+                        android:text="The air conditioning unit is making a loud rattling noise..."
                         android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                         android:textColor="#444444"
                         android:lineSpacingExtra="4dp" />
 
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Evidence Photo Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_evidence_photo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:visibility="gone"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="2dp"
+                app:strokeWidth="0dp"
+                tools:visibility="visible">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="24dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="EVIDENCE PHOTO"
+                        android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
+                        android:textColor="@color/forest_green"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.1" />
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="match_parent"
+                        android:layout_height="250dp"
+                        android:layout_marginTop="16dp"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="0dp"
+                        app:strokeWidth="1dp"
+                        app:strokeColor="#F0F0F0">
+
+                        <ImageView
+                            android:id="@+id/detail_image"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"
+                            android:contentDescription="Issue Evidence" />
+                    </com.google.android.material.card.MaterialCardView>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -178,7 +224,6 @@
                         android:textStyle="bold"
                         android:letterSpacing="0.1" />
 
-                    <!-- Horizontal Progress Step -->
                     <LinearLayout
                         android:id="@+id/status_progress_container"
                         android:layout_width="match_parent"
@@ -195,8 +240,8 @@
                         <View android:id="@+id/line_1" android:layout_width="0dp" android:layout_height="2dp" android:layout_marginHorizontal="8dp" android:layout_weight="1" android:background="@color/forest_green"/>
 
                         <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:gravity="center" android:orientation="vertical">
-                            <View android:id="@+id/dot_progress" android:layout_width="12dp" android:layout_height="12dp" android:background="@drawable/circle_green"/>
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="Working" android:textAppearance="@style/TextAppearance.Material3.LabelSmall" android:textColor="@color/forest_green" android:textStyle="bold"/>
+                            <View android:id="@+id/dot_progress" android:layout_width="12dp" android:layout_height="12dp" android:background="@drawable/circle_gray"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="Working" android:textAppearance="@style/TextAppearance.Material3.LabelSmall" android:textColor="#888888"/>
                         </LinearLayout>
 
                         <View android:id="@+id/line_2" android:layout_width="0dp" android:layout_height="2dp" android:layout_marginHorizontal="8dp" android:layout_weight="1" android:background="#DDDDDD"/>
@@ -327,7 +372,7 @@
                         android:id="@+id/text_staff_comment"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="No formal response has been provided by the maintenance team yet."
+                        android:text="No formal response yet."
                         android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                         android:textColor="#666666"
                         android:lineSpacingExtra="4dp" />

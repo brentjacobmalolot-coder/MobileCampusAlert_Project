@@ -2,6 +2,7 @@ package com.example.campusalert;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -11,9 +12,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.campusalert.database.AppDatabase;
 import com.example.campusalert.databinding.ActivityMainBinding;
-import com.example.campusalert.models.User;
 import com.example.campusalert.utils.SessionManager;
 import com.example.campusalert.viewmodels.MainViewModel;
 
@@ -45,7 +44,24 @@ public class MainActivity extends AppCompatActivity {
 
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
         
+        setupObservers();
+        
         binding.signInButton.setOnClickListener(v -> attemptLogin());
+    }
+
+    private void setupObservers() {
+        viewModel.getUserLiveData().observe(this, user -> {
+            binding.progressBar.setVisibility(View.GONE);
+            if (user != null) {
+                sessionManager.createSession(user);
+                navigateToDashboard(user.getRole().name());
+            }
+        });
+
+        viewModel.getErrorLiveData().observe(this, errorMessage -> {
+            binding.progressBar.setVisibility(View.GONE);
+            Toast.makeText(MainActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+        });
     }
 
     private void attemptLogin() {
@@ -57,17 +73,8 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        AppDatabase.databaseWriteExecutor.execute(() -> {
-            User user = viewModel.login(email, password);
-            runOnUiThread(() -> {
-                if (user != null) {
-                    sessionManager.createSession(user);
-                    navigateToDashboard(user.getRole().name());
-                } else {
-                    Toast.makeText(MainActivity.this, R.string.invalid_credentials, Toast.LENGTH_SHORT).show();
-                }
-            });
-        });
+        binding.progressBar.setVisibility(View.VISIBLE);
+        viewModel.login(email, password);
     }
 
     private void navigateToDashboard(String role) {

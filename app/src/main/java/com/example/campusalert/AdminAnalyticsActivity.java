@@ -43,11 +43,12 @@ public class AdminAnalyticsActivity extends AppCompatActivity {
 
     private void setupToolbar() {
         setSupportActionBar(binding.toolbar);
-        binding.btnLogout.setOnClickListener(v -> {
-            sessionManager.logout();
-            startActivity(new Intent(this, MainActivity.class));
-            finish();
-        });
+        
+        binding.btnSettings.setOnClickListener(v -> 
+            startActivity(new Intent(this, SettingsActivity.class)));
+            
+        binding.profileImageAdmin.setOnClickListener(v -> 
+            startActivity(new Intent(this, SettingsActivity.class)));
     }
 
     private void setupRecyclerView() {

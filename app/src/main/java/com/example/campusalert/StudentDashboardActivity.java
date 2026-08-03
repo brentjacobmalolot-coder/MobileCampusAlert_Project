@@ -2,7 +2,6 @@ package com.example.campusalert;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -35,7 +34,6 @@ public class StudentDashboardActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         setupRecyclerView();
-        setupViewModel();
         setupListeners();
     }
 
@@ -55,18 +53,14 @@ public class StudentDashboardActivity extends AppCompatActivity {
         reportViewModel.getReportsByStudent(sessionManager.getUserEmail()).observe(this, adapter::submitList);
     }
 
-    private void setupViewModel() {
-        // ViewModel already initialized in setupRecyclerView
-    }
-
     private void setupListeners() {
         binding.fabReport.setOnClickListener(v -> 
             startActivity(new Intent(this, ReportSubmissionActivity.class)));
 
-        binding.btnLogout.setOnClickListener(v -> {
-            sessionManager.logout();
-            startActivity(new Intent(this, MainActivity.class));
-            finish();
-        });
+        binding.btnSettings.setOnClickListener(v -> 
+            startActivity(new Intent(this, SettingsActivity.class)));
+            
+        binding.profileImage.setOnClickListener(v -> 
+            startActivity(new Intent(this, SettingsActivity.class)));
     }
 }

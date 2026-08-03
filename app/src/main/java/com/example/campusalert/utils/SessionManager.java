@@ -2,6 +2,7 @@ package com.example.campusalert.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKeys;
 import com.example.campusalert.models.User;
@@ -10,6 +11,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 
 public class SessionManager {
+    private static final String TAG = "SessionManager";
     private static final String PREF_NAME = "CampusAlertSession";
     private static final String KEY_EMAIL = "email";
     private static final String KEY_ROLE = "role";
@@ -24,20 +26,21 @@ public class SessionManager {
             pref = EncryptedSharedPreferences.create(
                     PREF_NAME,
                     masterKeyAlias,
-                    context,
+                    context.getApplicationContext(),
                     EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
                     EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
             );
             editor = pref.edit();
         } catch (GeneralSecurityException | IOException e) {
-            e.printStackTrace();
-            // Fallback to regular SharedPreferences if encryption fails (not ideal for production)
+            Log.e(TAG, "EncryptedSharedPreferences failed, falling back to standard prefs", e);
             pref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
             editor = pref.edit();
         }
     }
 
     public void createSession(User user) {
+        if (user == null || user.getRole() == null) return;
+        
         editor.putString(KEY_EMAIL, user.getEmail());
         editor.putString(KEY_ROLE, user.getRole().name());
         editor.putString(KEY_NAME, user.getName());
@@ -50,11 +53,17 @@ public class SessionManager {
 
     public UserRole getUserRole() {
         String roleStr = pref.getString(KEY_ROLE, null);
-        return roleStr != null ? UserRole.valueOf(roleStr) : null;
+        if (roleStr == null) return null;
+        try {
+            return UserRole.valueOf(roleStr);
+        } catch (IllegalArgumentException e) {
+            Log.e(TAG, "Invalid role stored in prefs: " + roleStr);
+            return null;
+        }
     }
 
     public String getUserName() {
-        return pref.getString(KEY_NAME, "");
+        return pref.getString(KEY_NAME, "User");
     }
 
     public void logout() {
@@ -63,6 +72,6 @@ public class SessionManager {
     }
 
     public boolean isLoggedIn() {
-        return getUserEmail() != null;
+        return getUserEmail() != null && getUserRole() != null;
     }
 }

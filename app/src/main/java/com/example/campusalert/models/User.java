@@ -9,9 +9,13 @@ public class User {
     @PrimaryKey
     @NonNull
     private String email;
-    private String password; // In a real app, this should be hashed
+    private String password;
     private String name;
     private UserRole role;
+
+    // No-argument constructor for Firebase
+    public User() {
+    }
 
     public User(@NonNull String email, String password, String name, UserRole role) {
         this.email = email;

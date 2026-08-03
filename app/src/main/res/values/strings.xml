@@ -45,7 +45,7 @@
     <string name="staff_comment_hint">Staff Comment</string>
     <string name="save_updates">Save Updates</string>
     <string name="update_status">Update Status</string>
-    <string name="report_id_status">Report ID: %1$s Status</string>
+    <string name="report_id_format">Report ID: #%1$s</string>
     <string name="task_count_format">%1$s (%2$d)</string>
     <string name="campus_background">Campus Background</string>
     <string name="campus_pulse">Campus Infrastructure Pulse</string>
@@ -63,4 +63,25 @@
     <string name="resolved_label">Resolved</string>
     <string name="infrastructure_submission">Infrastructure Submission</string>
     <string name="analytic_subtitle">Accurate data helps us resolve issues faster.</string>
+    <string name="new_report_title">New Report</string>
+    <string name="issue_specifications">ISSUE SPECIFICATIONS</string>
+    <string name="describe_hint">Provide a clear description of the issue...</string>
+    <string name="evidence_photo">Evidence Photo</string>
+    <string name="select_capture_photo">Select or Capture Photo</string>
+    <string name="submit_official_report">SUBMIT OFFICIAL REPORT</string>
+    <string name="account_not_found">Account not found.</string>
+    <string name="invalid_password">Invalid password.</string>
+    <string name="database_error">Database Error: %1$s</string>
+    <string name="evidence_photo_source">Evidence Photo Source</string>
+    <string name="take_photo">Take Photo</string>
+    <string name="choose_gallery">Choose from Gallery</string>
+    <string name="camera_permission_required">Camera permission is required to take photos</string>
+    <string name="workflow_progress">WORKFLOW PROGRESS</string>
+    <string name="admin_panel">ADMINISTRATION PANEL</string>
+    <string name="maintenance_response">Maintenance Response</string>
+    <string name="queue">Queue</string>
+    <string name="repair">Repair</string>
+    <string name="done">Done</string>
+    <string name="internal_staff_note">Internal Staff Note</string>
+    <string name="confirm_updates">Confirm Updates</string>
 </resources>

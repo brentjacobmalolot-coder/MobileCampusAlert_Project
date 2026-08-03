@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F4F6F7">
+    android:background="#F4F6F7"
+    tools:context=".ReportSubmissionActivity">
 
     <!-- High-Impact Collapsing Header -->
     <com.google.android.material.appbar.AppBarLayout
@@ -25,7 +26,7 @@
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:contentDescription="Campus Background Header"
+                android:contentDescription="@string/campus_background"
                 android:scaleType="centerCrop"
                 android:src="@mipmap/scc_bldg_background"
                 app:layout_collapseMode="parallax"
@@ -56,7 +57,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Infrastructure Submission"
+                    android:text="@string/infrastructure_submission"
                     android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
                     android:textColor="@color/white"
                     android:textStyle="bold" />
@@ -65,7 +66,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="Accurate data helps us resolve issues faster."
+                    android:text="@string/analytic_subtitle"
                     android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                     android:textColor="#E0E0E0" />
 
@@ -73,7 +74,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
-                    android:text="New Report"
+                    android:text="@string/new_report_title"
                     android:textAppearance="@style/TextAppearance.Material3.HeadlineLarge"
                     android:textColor="@color/white"
                     android:textStyle="bold" />
@@ -123,7 +124,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:letterSpacing="0.1"
-                        android:text="ISSUE SPECIFICATIONS"
+                        android:text="@string/issue_specifications"
                         android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
                         android:textColor="@color/forest_green"
                         android:textStyle="bold" />
@@ -136,10 +137,11 @@
 
                     <!-- Building Selection Section -->
                     <TextView
+                        android:id="@+id/label_building_select"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="32dp"
-                        android:text="Building Selection"
+                        android:text="@string/building_selection"
                         android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
                         android:textColor="@color/black"
                         android:textStyle="bold" />
@@ -164,15 +166,18 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="none"
+                            android:labelFor="@id/label_building_select"
                             android:paddingStart="60dp"
+                            android:paddingEnd="16dp"
                             android:textColor="@color/black" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <!-- Category Section -->
                     <TextView
+                        android:id="@+id/label_category_select"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Category"
+                        android:text="@string/category"
                         android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
                         android:textColor="@color/black"
                         android:textStyle="bold" />
@@ -197,7 +202,9 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="none"
+                            android:labelFor="@id/label_category_select"
                             android:paddingStart="60dp"
+                            android:paddingEnd="16dp"
                             android:textColor="@color/black" />
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -205,7 +212,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Priority Level"
+                        android:text="@string/priority_level"
                         android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
                         android:textColor="@color/black"
                         android:textStyle="bold" />
@@ -225,7 +232,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Low" />
+                            android:text="@string/low" />
 
                         <Button
                             android:id="@+id/btn_medium"
@@ -233,7 +240,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Medium" />
+                            android:text="@string/medium" />
 
                         <Button
                             android:id="@+id/btn_high"
@@ -241,14 +248,15 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="High" />
+                            android:text="@string/high" />
                     </com.google.android.material.button.MaterialButtonToggleGroup>
 
                     <!-- Issue Description Section -->
                     <TextView
+                        android:id="@+id/label_description_input"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Description"
+                        android:text="@string/description"
                         android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
                         android:textColor="@color/black"
                         android:textStyle="bold" />
@@ -273,38 +281,53 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="top"
-                            android:hint="Provide a clear description of the issue..."
+                            android:hint="@string/describe_hint"
                             android:inputType="textMultiLine"
+                            android:labelFor="@id/label_description_input"
                             android:lines="5"
                             android:paddingStart="60dp"
+                            android:paddingEnd="16dp"
                             android:textColor="@color/black" />
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <!-- Location Mapping -->
+                    <!-- Photo Evidence Section -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:letterSpacing="0.1"
-                        android:text="LOCATION IDENTIFICATION"
-                        android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
-                        android:textColor="@color/forest_green"
+                        android:text="@string/evidence_photo"
+                        android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
+                        android:textColor="@color/black"
                         android:textStyle="bold" />
 
-                    <com.google.android.material.card.MaterialCardView
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_pick_photo"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
                         android:layout_width="match_parent"
-                        android:layout_height="260dp"
-                        android:layout_marginTop="20dp"
-                        android:layout_marginBottom="32dp"
-                        app:cardCornerRadius="24dp"
-                        app:cardElevation="4dp"
-                        app:strokeColor="#EAEAEA"
-                        app:strokeWidth="1dp">
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/select_capture_photo"
+                        app:icon="@android:drawable/ic_menu_camera"
+                        app:iconTint="@color/forest_green"
+                        android:textColor="@color/forest_green"
+                        app:strokeColor="@color/forest_green" />
 
-                        <androidx.fragment.app.FragmentContainerView
-                            android:id="@+id/map_fragment"
-                            android:name="com.google.android.gms.maps.SupportMapFragment"
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/card_photo_preview"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginBottom="32dp"
+                        android:visibility="gone"
+                        app:cardCornerRadius="16dp"
+                        app:strokeWidth="1dp"
+                        app:strokeColor="@color/soft_sage">
+
+                        <ImageView
+                            android:id="@+id/img_preview"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent" />
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"
+                            android:contentDescription="@string/evidence_photo" />
                     </com.google.android.material.card.MaterialCardView>
 
                     <!-- Submission Action -->
@@ -312,8 +335,9 @@
                         android:id="@+id/submit_button"
                         android:layout_width="match_parent"
                         android:layout_height="64dp"
+                        android:layout_marginTop="16dp"
                         android:letterSpacing="0.05"
-                        android:text="SUBMIT OFFICIAL REPORT"
+                        android:text="@string/submit_official_report"
                         android:textAllCaps="true"
                         android:textSize="16sp"
                         android:textStyle="bold"

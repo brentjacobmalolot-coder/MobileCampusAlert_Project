@@ -18,6 +18,11 @@ public class Report {
     private String userId;   // ID of the student who reported it
     private String staffId;  // ID of the staff assigned
     private String staffComment;
+    private String imageUri; // URI or path of the evidence photo
+
+    // No-argument constructor required for Firebase Realtime Database
+    public Report() {
+    }
 
     public Report(String title, String description, String building, String category, String priority, String status, long timestamp, String userId) {
         this.title = title;
@@ -53,4 +58,6 @@ public class Report {
     public void setStaffId(String staffId) { this.staffId = staffId; }
     public String getStaffComment() { return staffComment; }
     public void setStaffComment(String staffComment) { this.staffComment = staffComment; }
+    public String getImageUri() { return imageUri; }
+    public void setImageUri(String imageUri) { this.imageUri = imageUri; }
 }

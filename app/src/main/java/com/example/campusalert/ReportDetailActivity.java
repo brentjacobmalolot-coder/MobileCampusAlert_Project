@@ -1,5 +1,6 @@
 package com.example.campusalert;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
@@ -64,11 +65,29 @@ public class ReportDetailActivity extends AppCompatActivity {
     }
 
     private void populateData(Report report) {
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle("Report ID: #" + report.getId());
+        }
+        
         binding.detailTitle.setText(report.getTitle());
         binding.detailBuilding.setText(report.getBuilding());
         binding.detailDescription.setText(report.getDescription());
+        binding.badgeStatus.setText(report.getStatus().toUpperCase());
+        
         binding.textStaffComment.setText(report.getStaffComment() != null && !report.getStaffComment().isEmpty() 
-                ? report.getStaffComment() : getString(R.string.no_comments_yet));
+                ? report.getStaffComment() : "No formal response yet.");
+
+        // Load evidence photo if available
+        if (report.getImageUri() != null && !report.getImageUri().isEmpty()) {
+            binding.cardEvidencePhoto.setVisibility(View.VISIBLE);
+            try {
+                binding.detailImage.setImageURI(Uri.parse(report.getImageUri()));
+            } catch (Exception e) {
+                binding.cardEvidencePhoto.setVisibility(View.GONE);
+            }
+        } else {
+            binding.cardEvidencePhoto.setVisibility(View.GONE);
+        }
 
         updateStatusUI(report.getStatus());
         
@@ -81,7 +100,7 @@ public class ReportDetailActivity extends AppCompatActivity {
     }
 
     private void updateStatusUI(String status) {
-        // Reset to default colors (gray)
+        // Reset steps
         binding.dotProgress.setBackgroundResource(R.drawable.circle_gray);
         binding.dotCompleted.setBackgroundResource(R.drawable.circle_gray);
         binding.line1.setBackgroundColor(0xFFDDDDDD);

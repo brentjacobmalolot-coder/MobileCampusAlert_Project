@@ -60,6 +60,7 @@
                     android:paddingEnd="16dp">
 
                     <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/profile_image_small"
                         android:layout_width="36dp"
                         android:layout_height="36dp"
                         android:layout_centerVertical="true"
@@ -69,13 +70,13 @@
                         app:strokeWidth="1dp" />
 
                     <ImageView
-                        android:id="@+id/btn_logout"
+                        android:id="@+id/btn_settings"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
-                        android:contentDescription="@string/logout"
-                        android:src="@android:drawable/ic_lock_power_off"
+                        android:contentDescription="User Settings"
+                        android:src="@drawable/ic_account_circle"
                         app:tint="@color/white" />
                 </RelativeLayout>
             </androidx.appcompat.widget.Toolbar>

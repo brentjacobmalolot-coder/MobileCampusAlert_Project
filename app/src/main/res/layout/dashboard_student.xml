@@ -73,13 +73,14 @@
                         app:tint="@color/white"
                         android:contentDescription="Notifications" />
 
+                    <!-- Replaced logout power button with profile settings icon -->
                     <ImageView
-                        android:id="@+id/btn_logout"
+                        android:id="@+id/btn_settings"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:src="@android:drawable/ic_lock_power_off"
-                        app:tint="@color/white"
-                        android:contentDescription="@string/logout" />
+                        android:contentDescription="User Settings"
+                        android:src="@drawable/ic_account_circle"
+                        app:tint="@color/white" />
                 </LinearLayout>
 
             </RelativeLayout>

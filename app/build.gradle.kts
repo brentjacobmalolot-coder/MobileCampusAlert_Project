@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.google.services)
 }
 
 android {
@@ -7,7 +8,8 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.example.campusalert"
+        // Changed to match the package name in google-services.json
+        applicationId = "com.example.mylog_in"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
@@ -40,6 +42,12 @@ dependencies {
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
+
+    // Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.database)
 
     implementation("org.tensorflow:tensorflow-lite:2.14.0")
     implementation("org.tensorflow:tensorflow-lite-support:0.4.4")
