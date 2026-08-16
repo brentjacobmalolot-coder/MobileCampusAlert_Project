@@ -1,12 +1,14 @@
 package com.example.campusalert.models;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "reports")
 public class Report {
-    @PrimaryKey(autoGenerate = true)
-    private int id;
+    @PrimaryKey
+    @NonNull
+    private String id; // Use Firebase Push Key as Primary Key
     
     private String title;
     private String description;
@@ -15,16 +17,17 @@ public class Report {
     private String priority; // Low, Medium, High
     private String status;   // Pending, In Progress, Completed
     private long timestamp;
-    private String userId;   // ID of the student who reported it
-    private String staffId;  // ID of the staff assigned
+    private String userId;   // Email of the student who reported it
+    private String staffId;  // Email of the staff assigned
     private String staffComment;
     private String imageUri; // URI or path of the evidence photo
 
-    // No-argument constructor required for Firebase Realtime Database
     public Report() {
+        this.id = ""; // Required for Firebase
     }
 
     public Report(String title, String description, String building, String category, String priority, String status, long timestamp, String userId) {
+        this.id = ""; // Initialized empty, set later by Firebase/Repository
         this.title = title;
         this.description = description;
         this.building = building;
@@ -35,9 +38,9 @@ public class Report {
         this.userId = userId;
     }
 
-    // Getters and Setters
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
+    @NonNull
+    public String getId() { return id; }
+    public void setId(@NonNull String id) { this.id = id; }
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
     public String getDescription() { return description; }

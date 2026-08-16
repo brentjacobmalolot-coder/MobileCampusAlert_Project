@@ -30,6 +30,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+/**
+ * Optimized Activity for report submission.
+ * Supports camera capture, gallery picking, and Firebase integration with Admin notifications.
+ */
 public class ReportSubmissionActivity extends AppCompatActivity {
     private ActivityReportSubmissionBinding binding;
     private ReportViewModel reportViewModel;
@@ -41,7 +45,7 @@ public class ReportSubmissionActivity extends AppCompatActivity {
                 if (isGranted) {
                     launchCamera();
                 } else {
-                    Toast.makeText(this, "Camera permission denied", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.camera_permission_required, Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -102,17 +106,25 @@ public class ReportSubmissionActivity extends AppCompatActivity {
     }
 
     private void setupListeners() {
-        binding.btnPickPhoto.setOnClickListener(v -> {
-            String[] options = {"Take Photo", "Choose from Gallery"};
-            new AlertDialog.Builder(this)
-                    .setTitle("Select Image")
-                    .setItems(options, (dialog, which) -> {
-                        if (which == 0) checkCameraPermission();
-                        else mGetContent.launch("image/*");
-                    }).show();
+        binding.btnPickPhoto.setOnClickListener(v -> showPhotoOptions());
+        
+        binding.btnRemovePhoto.setOnClickListener(v -> {
+            currentPhotoUri = null;
+            binding.imgPreview.setImageDrawable(null);
+            binding.cardPhotoPreview.setVisibility(View.GONE);
         });
 
         binding.submitButton.setOnClickListener(v -> submitReport());
+    }
+
+    private void showPhotoOptions() {
+        String[] options = {getString(R.string.take_photo), getString(R.string.choose_gallery)};
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.evidence_photo_source)
+                .setItems(options, (dialog, which) -> {
+                    if (which == 0) checkCameraPermission();
+                    else mGetContent.launch("image/*");
+                }).show();
     }
 
     private void checkCameraPermission() {
@@ -130,8 +142,7 @@ public class ReportSubmissionActivity extends AppCompatActivity {
                     ".jpg",
                     getExternalFilesDir(Environment.DIRECTORY_PICTURES)
             );
-            // Use the hardcoded authority that matches manifest for reliability
-            currentPhotoUri = FileProvider.getUriForFile(this, "com.example.mylog_in.fileprovider", photoFile);
+            currentPhotoUri = FileProvider.getUriForFile(this, "com.example.campusalert.fileprovider", photoFile);
             mTakePicture.launch(currentPhotoUri);
         } catch (IOException e) {
             Toast.makeText(this, "Failed to create image file", Toast.LENGTH_SHORT).show();
@@ -144,7 +155,7 @@ public class ReportSubmissionActivity extends AppCompatActivity {
         String desc = binding.descriptionEdit.getText().toString().trim();
 
         if (building.isEmpty() || category.isEmpty() || desc.isEmpty()) {
-            Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.fill_all_fields, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -152,12 +163,32 @@ public class ReportSubmissionActivity extends AppCompatActivity {
         if (binding.priorityToggleGroup.getCheckedButtonId() == R.id.btn_low) priority = "Low";
         else if (binding.priorityToggleGroup.getCheckedButtonId() == R.id.btn_high) priority = "High";
 
-        Report report = new Report(category + " issue", desc, building, category, priority, "Pending", System.currentTimeMillis(), sessionManager.getUserEmail());
-        if (currentPhotoUri != null) report.setImageUri(currentPhotoUri.toString());
+        // UI Loading State
+        binding.submitButton.setEnabled(false);
+        binding.submitButton.setText("");
+        binding.uploadProgress.setVisibility(View.VISIBLE);
 
-        reportViewModel.insert(report);
-        Toast.makeText(this, "Report submitted successfully", Toast.LENGTH_SHORT).show();
-        finish();
+        Report report = new Report(category + " issue", desc, building, category, priority, "Pending", System.currentTimeMillis(), sessionManager.getUserEmail());
+
+        reportViewModel.insert(report, currentPhotoUri, success -> {
+            runOnUiThread(() -> {
+                binding.uploadProgress.setVisibility(View.GONE);
+                binding.submitButton.setEnabled(true);
+                binding.submitButton.setText(R.string.submit_official_report);
+
+                if (success) {
+                    // Notify Admin
+                    reportViewModel.sendNotification("jaypeezulieta@sccpag.edu.ph", 
+                            "New Report Submitted", 
+                            "A new " + category + " issue was reported at " + building);
+                            
+                    Toast.makeText(this, R.string.report_submitted, Toast.LENGTH_SHORT).show();
+                    finish();
+                } else {
+                    Toast.makeText(this, "Submission failed. Please check your connection.", Toast.LENGTH_LONG).show();
+                }
+            });
+        });
     }
 
     @Override

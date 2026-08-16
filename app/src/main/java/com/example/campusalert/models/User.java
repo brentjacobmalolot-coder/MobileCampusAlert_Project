@@ -11,13 +11,13 @@ public class User {
     private String email;
     private String password;
     private String name;
-    private UserRole role;
+    private String role; // Changed to String for Firebase compatibility
 
     // No-argument constructor for Firebase
     public User() {
     }
 
-    public User(@NonNull String email, String password, String name, UserRole role) {
+    public User(@NonNull String email, String password, String name, String role) {
         this.email = email;
         this.password = password;
         this.name = name;
@@ -31,6 +31,19 @@ public class User {
     public void setPassword(String password) { this.password = password; }
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
-    public UserRole getRole() { return role; }
-    public void setRole(UserRole role) { this.role = role; }
+    public String getRole() { return role; }
+    public void setRole(String role) { this.role = role; }
+
+    /**
+     * Helper to get the role as an enum for application logic.
+     */
+    public UserRole getRoleEnum() {
+        if (role == null) return UserRole.STUDENT;
+        try {
+            return UserRole.valueOf(role.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            if (role.equalsIgnoreCase("staff")) return UserRole.MAINTENANCE_STAFF;
+            return UserRole.STUDENT;
+        }
+    }
 }

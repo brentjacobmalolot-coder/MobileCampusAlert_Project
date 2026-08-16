@@ -8,6 +8,8 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
 
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+
     <queries>
         <intent>
             <action android:name="android.media.action.IMAGE_CAPTURE" />
@@ -24,17 +26,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CampusAlert">
 
-        <!-- 
-             TODO: Replace 'YOUR_API_KEY' with your actual Google Maps API Key.
-             You can get one at: https://console.cloud.google.com/google/maps-apis/credentials
-        -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="API key" />
+            android:value="YOUR_API_KEY_HERE" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.example.mylog_in.fileprovider"
+            android:authorities="com.example.campusalert.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
@@ -57,6 +55,7 @@
         <activity android:name=".MaintenanceDashboardActivity" />
         <activity android:name=".AdminAnalyticsActivity" />
         <activity android:name=".SettingsActivity" />
+        <activity android:name=".NotificationsActivity" />
 
     </application>
 

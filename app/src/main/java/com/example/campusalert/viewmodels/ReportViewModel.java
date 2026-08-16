@@ -1,11 +1,13 @@
 package com.example.campusalert.viewmodels;
 
 import android.app.Application;
+import android.net.Uri;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import com.example.campusalert.database.ReportRepository;
 import com.example.campusalert.models.Report;
+import com.example.campusalert.models.User;
 import com.example.campusalert.database.ReportDao;
 import java.util.List;
 
@@ -29,7 +31,7 @@ public class ReportViewModel extends AndroidViewModel {
         return repository.getReportsByStatus(status);
     }
 
-    public LiveData<Report> getReportById(int id) {
+    public LiveData<Report> getReportById(String id) {
         return repository.getReportById(id);
     }
 
@@ -45,11 +47,19 @@ public class ReportViewModel extends AndroidViewModel {
         return repository.getReportsByCategory();
     }
 
-    public void insert(Report report) {
-        repository.insert(report);
+    public LiveData<List<User>> getStaffMembers() {
+        return repository.getStaffMembers();
+    }
+
+    public void insert(Report report, Uri imageUri, ReportRepository.OnUploadCompleteListener listener) {
+        repository.insert(report, imageUri, listener);
     }
 
     public void update(Report report) {
         repository.update(report);
+    }
+
+    public void sendNotification(String email, String title, String message) {
+        repository.sendNotification(email, title, message);
     }
 }

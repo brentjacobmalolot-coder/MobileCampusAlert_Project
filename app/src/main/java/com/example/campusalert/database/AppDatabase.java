@@ -13,7 +13,7 @@ import com.example.campusalert.models.User;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {User.class, Report.class}, version = 1, exportSchema = false)
+@Database(entities = {User.class, Report.class}, version = 3, exportSchema = false)
 @TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
 

@@ -42,7 +42,7 @@ public class SessionManager {
         if (user == null || user.getRole() == null) return;
         
         editor.putString(KEY_EMAIL, user.getEmail());
-        editor.putString(KEY_ROLE, user.getRole().name());
+        editor.putString(KEY_ROLE, user.getRole()); // Already a string now
         editor.putString(KEY_NAME, user.getName());
         editor.apply();
     }
@@ -58,6 +58,8 @@ public class SessionManager {
             return UserRole.valueOf(roleStr);
         } catch (IllegalArgumentException e) {
             Log.e(TAG, "Invalid role stored in prefs: " + roleStr);
+            // Fallback for staff naming variations
+            if ("STAFF".equalsIgnoreCase(roleStr)) return UserRole.MAINTENANCE_STAFF;
             return null;
         }
     }

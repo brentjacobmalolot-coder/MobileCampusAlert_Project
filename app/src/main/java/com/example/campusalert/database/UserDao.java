@@ -8,6 +8,8 @@ import androidx.room.Query;
 
 import com.example.campusalert.models.User;
 
+import java.util.List;
+
 @Dao
 public interface UserDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -21,4 +23,7 @@ public interface UserDao {
 
     @Query("SELECT COUNT(*) FROM users")
     int getUserCount();
+
+    @Query("SELECT * FROM users WHERE role = :role")
+    LiveData<List<User>> getUsersByRole(String role);
 }

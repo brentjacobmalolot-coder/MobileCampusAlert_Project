@@ -1,5 +1,6 @@
 package com.example.campusalert.database;
 
+import android.util.Log;
 import androidx.room.TypeConverter;
 import com.example.campusalert.models.UserRole;
 
@@ -11,6 +12,12 @@ public class Converters {
 
     @TypeConverter
     public static UserRole toUserRole(String role) {
-        return role == null ? null : UserRole.valueOf(role);
+        if (role == null) return null;
+        try {
+            return UserRole.valueOf(role.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            Log.e("Converters", "Unknown role: " + role);
+            return UserRole.STUDENT; // Safe fallback
+        }
     }
 }

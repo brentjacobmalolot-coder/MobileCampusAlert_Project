@@ -49,6 +49,9 @@ public class AdminAnalyticsActivity extends AppCompatActivity {
             
         binding.profileImageAdmin.setOnClickListener(v -> 
             startActivity(new Intent(this, SettingsActivity.class)));
+
+        binding.btnNotifications.setOnClickListener(v -> 
+            startActivity(new Intent(this, NotificationsActivity.class)));
     }
 
     private void setupRecyclerView() {
@@ -71,19 +74,23 @@ public class AdminAnalyticsActivity extends AppCompatActivity {
             binding.totalOpenText.setText(String.valueOf(count)));
 
         reportViewModel.getAllReports().observe(this, reports -> {
-            adapter.submitList(reports);
-            binding.avgResolutionText.setText(String.valueOf(reports.size()));
+            if (reports != null) {
+                adapter.submitList(reports);
+                binding.avgResolutionText.setText(String.valueOf(reports.size()));
+            }
         });
         
         // Dynamic Chart scaling
         reportViewModel.getReportsByCategory().observe(this, categories -> {
-            for (int i = 0; i < Math.min(categories.size(), 7); i++) {
-                int resId = getResources().getIdentifier("bar_" + (i + 1), "id", getPackageName());
-                View bar = findViewById(resId);
-                if (bar != null) {
-                    ViewGroup.LayoutParams params = bar.getLayoutParams();
-                    params.height = Math.max(20, Math.min(categories.get(i).count * 40, 400));
-                    bar.setLayoutParams(params);
+            if (categories != null) {
+                for (int i = 0; i < Math.min(categories.size(), 7); i++) {
+                    int resId = getResources().getIdentifier("bar_" + (i + 1), "id", getPackageName());
+                    View bar = findViewById(resId);
+                    if (bar != null) {
+                        ViewGroup.LayoutParams params = bar.getLayoutParams();
+                        params.height = Math.max(20, Math.min(categories.get(i).count * 40, 400));
+                        bar.setLayoutParams(params);
+                    }
                 }
             }
         });

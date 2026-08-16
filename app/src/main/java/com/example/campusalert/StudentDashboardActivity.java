@@ -2,6 +2,7 @@ package com.example.campusalert;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -9,21 +10,27 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.campusalert.adapters.ReportAdapter;
 import com.example.campusalert.databinding.DashboardStudentBinding;
+import com.example.campusalert.models.Report;
 import com.example.campusalert.models.UserRole;
 import com.example.campusalert.utils.SessionManager;
 import com.example.campusalert.viewmodels.ReportViewModel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class StudentDashboardActivity extends AppCompatActivity {
     private DashboardStudentBinding binding;
     private ReportViewModel reportViewModel;
     private SessionManager sessionManager;
+    private ReportAdapter adapter;
+    private List<Report> allReports = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
         sessionManager = new SessionManager(this);
-        // RBAC Security Guard
+        // Security check
         if (!sessionManager.isLoggedIn() || sessionManager.getUserRole() != UserRole.STUDENT) {
             startActivity(new Intent(this, MainActivity.class));
             finish();
@@ -33,13 +40,19 @@ public class StudentDashboardActivity extends AppCompatActivity {
         binding = DashboardStudentBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        // Dynamic Greeting
+        binding.textWelcome.setText("Welcome, " + sessionManager.getUserName());
+
         setupRecyclerView();
+        setupFilters();
         setupListeners();
+        
+        observeData();
     }
 
     private void setupRecyclerView() {
         binding.recyclerReports.setLayoutManager(new LinearLayoutManager(this));
-        ReportAdapter adapter = new ReportAdapter();
+        adapter = new ReportAdapter();
         binding.recyclerReports.setAdapter(adapter);
 
         adapter.setOnItemClickListener(report -> {
@@ -47,10 +60,44 @@ public class StudentDashboardActivity extends AppCompatActivity {
             intent.putExtra("REPORT_ID", report.getId());
             startActivity(intent);
         });
-        
-        // Observe Data
+    }
+
+    private void setupFilters() {
+        binding.chipGroupFilter.setOnCheckedStateChangeListener((group, checkedIds) -> {
+            filterReports();
+        });
+    }
+
+    private void observeData() {
         reportViewModel = new ViewModelProvider(this).get(ReportViewModel.class);
-        reportViewModel.getReportsByStudent(sessionManager.getUserEmail()).observe(this, adapter::submitList);
+        reportViewModel.getReportsByStudent(sessionManager.getUserEmail()).observe(this, reports -> {
+            if (reports != null) {
+                allReports = reports;
+                filterReports();
+            }
+        });
+    }
+
+    private void filterReports() {
+        int checkedId = binding.chipGroupFilter.getCheckedChipId();
+        List<Report> filtered = new ArrayList<>();
+        
+        String targetStatus = "";
+        if (checkedId == R.id.chip_pending) targetStatus = "Pending";
+        else if (checkedId == R.id.chip_in_progress) targetStatus = "In Progress";
+        else if (checkedId == R.id.chip_completed) targetStatus = "Completed";
+
+        if (targetStatus.isEmpty()) {
+            filtered.addAll(allReports);
+        } else {
+            for (Report r : allReports) {
+                if (targetStatus.equalsIgnoreCase(r.getStatus())) {
+                    filtered.add(r);
+                }
+            }
+        }
+        
+        adapter.submitList(filtered);
     }
 
     private void setupListeners() {
@@ -62,5 +109,13 @@ public class StudentDashboardActivity extends AppCompatActivity {
             
         binding.profileImage.setOnClickListener(v -> 
             startActivity(new Intent(this, SettingsActivity.class)));
+            
+        binding.btnViewAll.setOnClickListener(v -> {
+            binding.chipAll.setChecked(true);
+            filterReports();
+        });
+
+        binding.btnNotifications.setOnClickListener(v -> 
+            startActivity(new Intent(this, NotificationsActivity.class)));
     }
 }

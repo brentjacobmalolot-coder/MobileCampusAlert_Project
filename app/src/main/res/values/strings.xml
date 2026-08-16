@@ -49,7 +49,7 @@
     <string name="task_count_format">%1$s (%2$d)</string>
     <string name="campus_background">Campus Background</string>
     <string name="campus_pulse">Campus Infrastructure Pulse</string>
-    <string name="efficiency_growth">12% Efficiency Growth</string>
+    <string name="efficiency_growth">12%% Efficiency Growth</string>
     <string name="mock_total_open">26</string>
     <string name="active_cases">Active Cases</string>
     <string name="mock_avg_res">1.2d</string>
@@ -84,4 +84,5 @@
     <string name="done">Done</string>
     <string name="internal_staff_note">Internal Staff Note</string>
     <string name="confirm_updates">Confirm Updates</string>
+    <string name="footer_message">Ensuring a safer campus together.</string>
 </resources>

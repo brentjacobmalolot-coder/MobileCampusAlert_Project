@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F4F6F7"
+    android:background="#F8F9FA"
     tools:context=".ReportSubmissionActivity">
 
     <!-- High-Impact Collapsing Header -->
@@ -32,7 +32,7 @@
                 app:layout_collapseMode="parallax"
                 app:layout_collapseParallaxMultiplier="0.7" />
 
-            <!-- Premium Scrim Layers for Readability -->
+            <!-- Premium Scrim Layers -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -103,7 +103,7 @@
             android:orientation="vertical"
             android:paddingBottom="60dp">
 
-            <!-- Premium Floating Form Card (Strong Overlap) -->
+            <!-- Premium Floating Form Card -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -111,7 +111,7 @@
                 android:layout_marginTop="-90dp"
                 app:cardBackgroundColor="@color/white"
                 app:cardCornerRadius="32dp"
-                app:cardElevation="16dp"
+                app:cardElevation="12dp"
                 app:strokeWidth="0dp">
 
                 <LinearLayout
@@ -165,6 +165,7 @@
                             android:id="@+id/building_dropdown"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:hint="@string/building_selection"
                             android:inputType="none"
                             android:labelFor="@id/label_building_select"
                             android:paddingStart="60dp"
@@ -201,6 +202,7 @@
                             android:id="@+id/category_dropdown"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:hint="@string/category"
                             android:inputType="none"
                             android:labelFor="@id/label_category_select"
                             android:paddingStart="60dp"
@@ -322,31 +324,89 @@
                         app:strokeWidth="1dp"
                         app:strokeColor="@color/soft_sage">
 
-                        <ImageView
-                            android:id="@+id/img_preview"
+                        <RelativeLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:scaleType="centerCrop"
-                            android:contentDescription="@string/evidence_photo" />
+                            android:layout_height="match_parent">
+
+                            <ImageView
+                                android:id="@+id/img_preview"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:scaleType="centerCrop"
+                                android:contentDescription="@string/evidence_photo" />
+
+                            <ImageButton
+                                android:id="@+id/btn_remove_photo"
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:layout_alignParentTop="true"
+                                android:layout_alignParentEnd="true"
+                                android:layout_margin="8dp"
+                                android:background="@drawable/circle_gray"
+                                android:src="@android:drawable/ic_menu_close_clear_cancel"
+                                app:tint="@color/white"
+                                android:contentDescription="Remove Photo" />
+                        </RelativeLayout>
                     </com.google.android.material.card.MaterialCardView>
 
                     <!-- Submission Action -->
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/submit_button"
+                    <FrameLayout
                         android:layout_width="match_parent"
-                        android:layout_height="64dp"
-                        android:layout_marginTop="16dp"
-                        android:letterSpacing="0.05"
-                        android:text="@string/submit_official_report"
-                        android:textAllCaps="true"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        app:backgroundTint="@color/forest_green"
-                        app:cornerRadius="20dp"
-                        app:elevation="8dp" />
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/submit_button"
+                            android:layout_width="match_parent"
+                            android:layout_height="64dp"
+                            android:letterSpacing="0.05"
+                            android:text="@string/submit_official_report"
+                            android:textAllCaps="true"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            app:backgroundTint="@color/forest_green"
+                            app:cornerRadius="20dp"
+                            app:elevation="8dp" />
+
+                        <ProgressBar
+                            android:id="@+id/upload_progress"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:layout_gravity="center"
+                            android:visibility="gone"
+                            android:indeterminateTint="@color/white" />
+                    </FrameLayout>
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
+
+            <!-- Professional Footer -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:layout_marginTop="48dp"
+                android:paddingBottom="32dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/footer_message"
+                    android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
+                    android:textColor="@color/sage_green"
+                    android:textStyle="italic"
+                    android:alpha="0.8" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="@string/powered_by"
+                    android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+                    android:textColor="@color/sage_green"
+                    android:alpha="0.5" />
+            </LinearLayout>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

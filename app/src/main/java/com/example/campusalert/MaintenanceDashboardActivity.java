@@ -63,6 +63,12 @@ public class MaintenanceDashboardActivity extends AppCompatActivity {
                 report.setStatus("Completed");
                 report.setStaffId(sessionManager.getUserEmail());
                 reportViewModel.update(report);
+                
+                // Notify Student
+                reportViewModel.sendNotification(report.getUserId(), 
+                        "Task Completed", 
+                        "The maintenance issue has been resolved: " + report.getTitle());
+                
                 Toast.makeText(MaintenanceDashboardActivity.this, R.string.report_updated, Toast.LENGTH_SHORT).show();
             }
         });
@@ -92,6 +98,9 @@ public class MaintenanceDashboardActivity extends AppCompatActivity {
             
         binding.profileImageSmall.setOnClickListener(v -> 
             startActivity(new Intent(this, SettingsActivity.class)));
+
+        binding.btnNotifications.setOnClickListener(v -> 
+            startActivity(new Intent(this, NotificationsActivity.class)));
     }
 
     private void updateFilter(String status) {
@@ -105,8 +114,10 @@ public class MaintenanceDashboardActivity extends AppCompatActivity {
         }
 
         reportViewModel.getReportsByStatus(dbStatus).observe(this, reports -> {
-            adapter.submitList(reports);
-            binding.textTaskCount.setText(getString(R.string.task_count_format, status, reports.size()));
+            if (reports != null) {
+                adapter.submitList(reports);
+                binding.textTaskCount.setText(getString(R.string.task_count_format, status, reports.size()));
+            }
         });
     }
 }

@@ -29,13 +29,13 @@ public class TaskAdapter extends ListAdapter<Report, TaskAdapter.TaskViewHolder>
     private static final DiffUtil.ItemCallback<Report> DIFF_CALLBACK = new DiffUtil.ItemCallback<Report>() {
         @Override
         public boolean areItemsTheSame(@NonNull Report oldItem, @NonNull Report newItem) {
-            return oldItem.getId() == newItem.getId();
+            return oldItem.getId().equals(newItem.getId());
         }
 
         @Override
         public boolean areContentsTheSame(@NonNull Report oldItem, @NonNull Report newItem) {
             return oldItem.getStatus().equals(newItem.getStatus()) &&
-                    oldItem.getStaffComment() != null && oldItem.getStaffComment().equals(newItem.getStaffComment());
+                    (oldItem.getStaffComment() == null ? newItem.getStaffComment() == null : oldItem.getStaffComment().equals(newItem.getStaffComment()));
         }
     };
 
@@ -57,7 +57,7 @@ public class TaskAdapter extends ListAdapter<Report, TaskAdapter.TaskViewHolder>
         SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault());
         holder.date.setText("Reported: " + sdf.format(new Date(report.getTimestamp())));
 
-        if ("Completed".equals(report.getStatus())) {
+        if ("Completed".equalsIgnoreCase(report.getStatus())) {
             holder.btnComplete.setVisibility(View.GONE);
         } else {
             holder.btnComplete.setVisibility(View.VISIBLE);

@@ -21,7 +21,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
-            android:src="@mipmap/scc_bldg_background" />
+            android:src="@mipmap/scc_bldg_background"
+            android:contentDescription="@string/campus_background" />
 
         <!-- Blurry Green Scrim Overlay -->
         <View
@@ -41,9 +42,9 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="40dp">
+            android:paddingBottom="60dp">
 
-            <!-- Adjusted spacer height to move content higher up -->
+            <!-- Spacer to move content down -->
             <View
                 android:id="@+id/top_spacer"
                 android:layout_width="match_parent"
@@ -51,14 +52,14 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <!-- Sleek Login Card with Strong Overlap -->
+            <!-- Sleek Login Card -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/login_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="24dp"
                 app:cardCornerRadius="32dp"
-                app:cardElevation="16dp"
+                app:cardElevation="12dp"
                 app:strokeWidth="0dp"
                 app:layout_constraintTop_toBottomOf="@id/top_spacer">
 
@@ -67,14 +68,14 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:paddingHorizontal="28dp"
-                    android:paddingTop="90dp"
-                    android:paddingBottom="48dp">
+                    android:paddingTop="80dp"
+                    android:paddingBottom="40dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        android:layout_marginBottom="36dp"
+                        android:layout_marginBottom="32dp"
                         android:text="Welcome Back"
                         android:textAppearance="@style/TextAppearance.Material3.HeadlineMedium"
                         android:textColor="@color/forest_green"
@@ -86,7 +87,7 @@
                         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="18dp"
+                        android:layout_marginBottom="16dp"
                         android:hint="@string/email"
                         app:boxCornerRadiusBottomEnd="16dp"
                         app:boxCornerRadiusBottomStart="16dp"
@@ -113,7 +114,7 @@
                         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="32dp"
+                        android:layout_marginBottom="8dp"
                         android:hint="@string/password"
                         app:boxCornerRadiusBottomEnd="16dp"
                         app:boxCornerRadiusBottomStart="16dp"
@@ -121,8 +122,8 @@
                         app:boxCornerRadiusTopStart="16dp"
                         app:boxStrokeColor="@color/forest_green"
                         app:hintTextColor="@color/forest_green"
-                        app:passwordToggleEnabled="true"
-                        app:passwordToggleTint="@color/forest_green"
+                        app:endIconMode="password_toggle"
+                        app:endIconTint="@color/forest_green"
                         app:startIconDrawable="@android:drawable/ic_lock_idle_lock"
                         app:startIconTint="@color/forest_green">
 
@@ -132,22 +133,60 @@
                             android:layout_height="wrap_content"
                             android:inputType="textPassword"
                             android:paddingStart="48dp"
-                            android:paddingEnd="16dp"
+                            android:paddingEnd="48dp"
                             android:textColor="@color/black" />
                     </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- Forgot Password Link -->
+                    <TextView
+                        android:id="@+id/forgot_password"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:layout_marginBottom="32dp"
+                        android:padding="4dp"
+                        android:text="Forgot Password?"
+                        android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
+                        android:textColor="@color/sage_green"
+                        android:textStyle="bold" />
 
                     <!-- Sign In Button -->
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/sign_in_button"
                         android:layout_width="match_parent"
-                        android:layout_height="64dp"
+                        android:layout_height="60dp"
                         android:text="@string/sign_in"
                         android:textAllCaps="false"
                         android:textSize="18sp"
                         android:textStyle="bold"
                         app:backgroundTint="@color/forest_green"
-                        app:cornerRadius="18dp"
-                        app:elevation="8dp" />
+                        app:cornerRadius="16dp"
+                        app:elevation="4dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginVertical="16dp"
+                        android:text="OR"
+                        android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
+                        android:textColor="@color/sage_green" />
+
+                    <!-- Google Sign In Button -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/google_sign_in_button"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:text="Sign in with Google"
+                        android:textAllCaps="false"
+                        android:textSize="16sp"
+                        app:cornerRadius="16dp"
+                        app:icon="@android:drawable/ic_menu_send"
+                        app:iconGravity="textStart"
+                        app:iconPadding="12dp"
+                        app:strokeColor="@color/forest_green"
+                        android:textColor="@color/forest_green" />
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -155,12 +194,12 @@
             <!-- Circular Logo Container -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/logo_card"
-                android:layout_width="140dp"
-                android:layout_height="140dp"
-                app:cardCornerRadius="70dp"
-                app:cardElevation="20dp"
+                android:layout_width="130dp"
+                android:layout_height="130dp"
+                app:cardCornerRadius="65dp"
+                app:cardElevation="16dp"
                 app:strokeColor="@color/white"
-                app:strokeWidth="3dp"
+                app:strokeWidth="4dp"
                 app:layout_constraintBottom_toTopOf="@id/login_card"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -169,11 +208,24 @@
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:padding="12dp"
+                    android:padding="10dp"
                     android:scaleType="centerInside"
                     android:src="@mipmap/scc_newlogo2_background"
                     android:contentDescription="@string/app_name" />
             </com.google.android.material.card.MaterialCardView>
+
+            <!-- Footer Section -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:text="@string/powered_by"
+                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+                android:textColor="@color/sage_green"
+                android:alpha="0.7"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/login_card" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
@@ -184,6 +236,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
+        android:elevation="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

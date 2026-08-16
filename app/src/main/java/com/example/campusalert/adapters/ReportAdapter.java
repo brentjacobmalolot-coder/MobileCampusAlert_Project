@@ -25,12 +25,12 @@ public class ReportAdapter extends ListAdapter<Report, ReportAdapter.ReportViewH
     private static final DiffUtil.ItemCallback<Report> DIFF_CALLBACK = new DiffUtil.ItemCallback<Report>() {
         @Override
         public boolean areItemsTheSame(@NonNull Report oldItem, @NonNull Report newItem) {
-            return oldItem.getId() == newItem.getId();
+            return oldItem.getId().equals(newItem.getId());
         }
 
         @Override
         public boolean areContentsTheSame(@NonNull Report oldItem, @NonNull Report newItem) {
-            return oldItem.getStatus().equals(newItem.getStatus()) &&
+            return oldItem.getStatus().equalsIgnoreCase(newItem.getStatus()) &&
                     oldItem.getPriority().equals(newItem.getPriority()) &&
                     oldItem.getTitle().equals(newItem.getTitle());
         }
@@ -47,19 +47,22 @@ public class ReportAdapter extends ListAdapter<Report, ReportAdapter.ReportViewH
     @Override
     public void onBindViewHolder(@NonNull ReportViewHolder holder, int position) {
         Report currentReport = getItem(position);
+        if (currentReport == null) return;
+
         holder.textViewTitle.setText(currentReport.getTitle());
         holder.textViewBuilding.setText(currentReport.getBuilding());
-        holder.statusPill.setText(currentReport.getStatus());
+        
+        String status = currentReport.getStatus() != null ? currentReport.getStatus() : "Pending";
         
         // Dynamic styling for status
-        if ("Pending".equals(currentReport.getStatus())) {
+        if ("Pending".equalsIgnoreCase(status)) {
             holder.statusPill.setBackgroundResource(R.drawable.bg_pill_pending);
             holder.statusIcon.setImageResource(android.R.drawable.ic_menu_info_details);
-        } else if ("In Progress".equals(currentReport.getStatus())) {
+        } else if ("In Progress".equalsIgnoreCase(status)) {
             holder.statusPill.setBackgroundResource(R.drawable.bg_pill_progress);
             holder.statusIcon.setImageResource(android.R.drawable.ic_menu_edit);
-        } else {
-            holder.statusPill.setBackgroundResource(R.drawable.circle_green); // Reusing as fallback or create bg_pill_completed
+        } else if ("Completed".equalsIgnoreCase(status)) {
+            holder.statusPill.setBackgroundResource(R.drawable.bg_pill_completed);
             holder.statusIcon.setImageResource(android.R.drawable.checkbox_on_background);
         }
     }
@@ -73,10 +76,10 @@ public class ReportAdapter extends ListAdapter<Report, ReportAdapter.ReportViewH
     }
 
     class ReportViewHolder extends RecyclerView.ViewHolder {
-        private TextView textViewTitle;
-        private TextView textViewBuilding;
-        private TextView statusPill;
-        private ImageView statusIcon;
+        private final TextView textViewTitle;
+        private final TextView textViewBuilding;
+        private final View statusPill;
+        private final ImageView statusIcon;
 
         public ReportViewHolder(@NonNull View itemView) {
             super(itemView);

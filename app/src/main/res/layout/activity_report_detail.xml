@@ -19,19 +19,9 @@
             android:layout_height="?attr/actionBarSize"
             app:navigationIcon="?attr/homeAsUpIndicator"
             app:navigationIconTint="@color/white"
-            app:title="Report ID: #A123004"
+            app:title="Report Details"
             app:titleCentered="true"
-            app:titleTextColor="@color/white">
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_gravity="end"
-                android:layout_marginEnd="16dp"
-                android:contentDescription="Share Report"
-                android:src="@android:drawable/ic_menu_share"
-                app:tint="@color/white" />
-        </com.google.android.material.appbar.MaterialToolbar>
+            app:titleTextColor="@color/white" />
 
         <!-- Status Summary Area -->
         <LinearLayout
@@ -56,7 +46,7 @@
                     android:layout_height="wrap_content"
                     android:paddingHorizontal="16dp"
                     android:paddingVertical="6dp"
-                    android:text="IN PROGRESS"
+                    android:text="PENDING"
                     android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
                     android:textColor="@color/white"
                     android:textStyle="bold" />
@@ -68,7 +58,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:paddingHorizontal="24dp"
-                android:text="Broken Air Conditioning Unit"
+                android:text="Issue Title"
                 android:textAlignment="center"
                 android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
                 android:textColor="@color/white"
@@ -88,6 +78,60 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="20dp">
+
+            <!-- Admin Assignment Section -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_admin_assignment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:visibility="gone"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="6dp"
+                app:strokeColor="@color/institutional_yellow"
+                app:strokeWidth="1dp"
+                tools:visibility="visible">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="24dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="ASSIGN MAINTENANCE STAFF"
+                        android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+                        android:textColor="@color/forest_green"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.1" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:hint="Select Staff Member">
+
+                        <AutoCompleteTextView
+                            android:id="@+id/staff_spinner"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="none" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_assign_staff"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:layout_marginTop="16dp"
+                        android:text="Assign &amp; Notify"
+                        android:textStyle="bold"
+                        app:backgroundTint="@color/forest_green"
+                        app:cornerRadius="16dp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
             <!-- Information Card -->
             <com.google.android.material.card.MaterialCardView
@@ -121,7 +165,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="12dp"
-                            android:text="St. Therese Building - Room 204"
+                            android:text="Building Location"
                             android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
                             android:textColor="@color/black"
                             android:textStyle="bold" />
@@ -146,7 +190,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="The air conditioning unit is making a loud rattling noise..."
+                        android:text="Description of the issue reported by the student."
                         android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                         android:textColor="#444444"
                         android:lineSpacingExtra="4dp" />
@@ -237,18 +281,18 @@
                             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="Reported" android:textAppearance="@style/TextAppearance.Material3.LabelSmall" android:textColor="@color/forest_green" android:textStyle="bold"/>
                         </LinearLayout>
 
-                        <View android:id="@+id/line_1" android:layout_width="0dp" android:layout_height="2dp" android:layout_marginHorizontal="8dp" android:layout_weight="1" android:background="@color/forest_green"/>
+                        <View android:id="@+id/line_1" android:layout_width="0dp" android:layout_height="2dp" android:layout_marginHorizontal="8dp" android:layout_weight="1" android:background="#DDDDDD"/>
 
                         <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:gravity="center" android:orientation="vertical">
                             <View android:id="@+id/dot_progress" android:layout_width="12dp" android:layout_height="12dp" android:background="@drawable/circle_gray"/>
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="Working" android:textAppearance="@style/TextAppearance.Material3.LabelSmall" android:textColor="#888888"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="Working" android:textAppearance="@style/TextAppearance.Material3.LabelSmall" android:textColor="#888888" android:textStyle="bold"/>
                         </LinearLayout>
 
                         <View android:id="@+id/line_2" android:layout_width="0dp" android:layout_height="2dp" android:layout_marginHorizontal="8dp" android:layout_weight="1" android:background="#DDDDDD"/>
 
                         <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:gravity="center" android:orientation="vertical">
                             <View android:id="@+id/dot_completed" android:layout_width="12dp" android:layout_height="12dp" android:background="@drawable/circle_gray"/>
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="Resolved" android:textAppearance="@style/TextAppearance.Material3.LabelSmall" android:textColor="#888888"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="Resolved" android:textAppearance="@style/TextAppearance.Material3.LabelSmall" android:textColor="#888888" android:textStyle="bold"/>
                         </LinearLayout>
 
                     </LinearLayout>

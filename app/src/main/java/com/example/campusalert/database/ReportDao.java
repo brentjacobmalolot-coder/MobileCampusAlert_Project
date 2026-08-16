@@ -29,7 +29,7 @@ public interface ReportDao {
     LiveData<List<Report>> getReportsByStatus(String status);
     
     @Query("SELECT * FROM reports WHERE id = :reportId")
-    LiveData<Report> getReportById(int reportId);
+    LiveData<Report> getReportById(String reportId);
 
     @Query("SELECT COUNT(*) FROM reports WHERE status != 'Completed'")
     LiveData<Integer> getOpenReportsCount();
