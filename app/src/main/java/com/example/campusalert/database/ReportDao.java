@@ -19,25 +19,37 @@ public interface ReportDao {
     @Update
     void update(Report report);
 
+    @Query("SELECT * FROM reports WHERE isArchived = 0 AND mergedIntoId IS NULL ORDER BY timestamp DESC")
+    LiveData<List<Report>> getAllActiveReports();
+
     @Query("SELECT * FROM reports ORDER BY timestamp DESC")
     LiveData<List<Report>> getAllReports();
 
-    @Query("SELECT * FROM reports WHERE userId = :userId ORDER BY timestamp DESC")
+    @Query("SELECT * FROM reports WHERE userId = :userId AND isArchived = 0 ORDER BY timestamp DESC")
     LiveData<List<Report>> getReportsByStudent(String userId);
 
-    @Query("SELECT * FROM reports WHERE status = :status ORDER BY timestamp DESC")
+    @Query("SELECT * FROM reports WHERE staffId = :staffId AND isArchived = 0 ORDER BY timestamp DESC")
+    LiveData<List<Report>> getReportsByStaff(String staffId);
+
+    @Query("SELECT * FROM reports WHERE staffId = :staffId AND status = :status AND isArchived = 0 ORDER BY timestamp DESC")
+    LiveData<List<Report>> getReportsByStaffAndStatus(String staffId, String status);
+
+    @Query("SELECT * FROM reports WHERE status = :status AND isArchived = 0 ORDER BY timestamp DESC")
     LiveData<List<Report>> getReportsByStatus(String status);
     
     @Query("SELECT * FROM reports WHERE id = :reportId")
     LiveData<Report> getReportById(String reportId);
 
-    @Query("SELECT COUNT(*) FROM reports WHERE status != 'Completed'")
+    @Query("SELECT * FROM reports WHERE id = :reportId")
+    Report getReportByIdSync(String reportId);
+
+    @Query("SELECT COUNT(*) FROM reports WHERE status != 'Completed' AND isArchived = 0")
     LiveData<Integer> getOpenReportsCount();
 
     @Query("SELECT COUNT(*) FROM reports")
     LiveData<Integer> getTotalReportsCount();
 
-    @Query("SELECT category, COUNT(*) as count FROM reports GROUP BY category")
+    @Query("SELECT category, COUNT(*) as count FROM reports WHERE isArchived = 0 GROUP BY category")
     LiveData<List<CategoryCount>> getReportsByCategory();
 
     public static class CategoryCount {

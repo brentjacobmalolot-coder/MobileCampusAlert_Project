@@ -10,6 +10,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.campusalert.databinding.UserSettingsBinding;
 import com.example.campusalert.models.UserRole;
 import com.example.campusalert.utils.SessionManager;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class SettingsActivity extends AppCompatActivity {
     private UserSettingsBinding binding;
@@ -18,7 +22,6 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Initialize sessionManager inside onCreate to ensure context is valid
         sessionManager = new SessionManager(this);
         
         binding = UserSettingsBinding.inflate(getLayoutInflater());
@@ -33,7 +36,6 @@ public class SettingsActivity extends AppCompatActivity {
         setSupportActionBar(binding.toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            // Title is also handled in XML, but we can set it here for clarity
             getSupportActionBar().setTitle(""); 
         }
     }
@@ -53,19 +55,49 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void setupListeners() {
-        binding.btnLogout.setOnClickListener(v -> {
-            sessionManager.logout();
-            Intent intent = new Intent(this, MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-            finish();
-        });
+        binding.btnLogout.setOnClickListener(v -> performLogout());
+    }
+
+    private void performLogout() {
+        // 1. CLEAR EVERYTHING IMMEDIATELY
+        // Clear Firebase Auth session
+        FirebaseAuth.getInstance().signOut();
+        // Clear local storage session (synchronized)
+        sessionManager.logout();
+
+        // 2. Prepare Google Sign-out Client
+        // It's important to use the same configuration used for login
+        String webClientId = getString(R.string.default_web_client_id);
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(webClientId)
+                .requestEmail()
+                .build();
+        
+        GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(this, gso);
+        
+        // 3. Clear Google Account and THEN navigate
+        googleSignInClient.signOut().addOnCompleteListener(this, task -> navigateToLogin());
+        
+        // Safety Fallback: Force navigation if Google API is slow (prevents hanging)
+        binding.btnLogout.postDelayed(this::navigateToLogin, 800);
+    }
+
+    private void navigateToLogin() {
+        if (isFinishing()) return;
+        
+        Intent intent = new Intent(SettingsActivity.this, MainActivity.class);
+        // CRITICAL: Clear all activities (Dashboards) from the background
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        // Explicitly signal to MainActivity that this is a fresh start after logout
+        intent.putExtra("IS_LOGGING_OUT", true);
+        startActivity(intent);
+        finish();
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            finish(); // Using finish() instead of onBackPressed() for better navigation behavior here
+            finish();
             return true;
         }
         return super.onOptionsItemSelected(item);

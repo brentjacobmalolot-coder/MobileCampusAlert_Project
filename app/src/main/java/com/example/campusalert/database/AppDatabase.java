@@ -1,6 +1,7 @@
 package com.example.campusalert.database;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.room.Database;
 import androidx.room.Room;
@@ -13,7 +14,11 @@ import com.example.campusalert.models.User;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {User.class, Report.class}, version = 3, exportSchema = false)
+/**
+ * Main database class for CampusAlert.
+ * Version 47: Added queue integrity fields to Report model.
+ */
+@Database(entities = {User.class, Report.class}, version = 47, exportSchema = false)
 @TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -29,9 +34,11 @@ public abstract class AppDatabase extends RoomDatabase {
         if (INSTANCE == null) {
             synchronized (AppDatabase.class) {
                 if (INSTANCE == null) {
+                    Log.d("AppDatabase", "Initializing database campus_alert_db_v3");
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                                    AppDatabase.class, "campus_alert_database")
+                                    AppDatabase.class, "campus_alert_db_v3")
                             .fallbackToDestructiveMigration()
+                            .fallbackToDestructiveMigrationOnDowngrade()
                             .build();
                 }
             }

@@ -4,6 +4,10 @@
     <string name="email">Email Address</string>
     <string name="password">Password</string>
     <string name="welcome_back">Welcome back, %1$s</string>
+    <string name="welcome_back_title">Welcome Back</string>
+    <string name="sign_in_subtitle">Sign in to continue to Campus Alert</string>
+    <string name="or_separator">OR</string>
+    <string name="sign_in_google">Sign in with Google</string>
     <string name="recent_activity">Recent Activity</string>
     <string name="submit_report">Submit Report</string>
     <string name="report_submission">Report Submission</string>
@@ -85,4 +89,7 @@
     <string name="internal_staff_note">Internal Staff Note</string>
     <string name="confirm_updates">Confirm Updates</string>
     <string name="footer_message">Ensuring a safer campus together.</string>
+    <string name="no_notifications">No new notifications</string>
+
+    <string name="default_web_client_id">785985058591-tjfo8c878dq8v0aa9p4dcupplvm2qsp4.apps.googleusercontent.com</string>
 </resources>

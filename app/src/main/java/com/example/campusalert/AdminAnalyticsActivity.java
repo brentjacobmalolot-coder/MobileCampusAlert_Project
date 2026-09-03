@@ -36,6 +36,13 @@ public class AdminAnalyticsActivity extends AppCompatActivity {
         binding = ActivityAdminAnalyticsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        // Update the toolbar title to include the Admin's name if desired
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle("Admin: " + sessionManager.getUserName());
+        } else {
+            binding.collapsingToolbar.setTitle(sessionManager.getUserName());
+        }
+
         setupToolbar();
         setupRecyclerView();
         setupChartsAndStats();

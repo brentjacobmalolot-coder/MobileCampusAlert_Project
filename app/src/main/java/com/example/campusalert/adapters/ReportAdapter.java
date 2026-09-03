@@ -14,6 +14,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.campusalert.R;
 import com.example.campusalert.models.Report;
 
+import java.util.Objects;
+
 public class ReportAdapter extends ListAdapter<Report, ReportAdapter.ReportViewHolder> {
 
     private OnItemClickListener listener;
@@ -25,14 +27,17 @@ public class ReportAdapter extends ListAdapter<Report, ReportAdapter.ReportViewH
     private static final DiffUtil.ItemCallback<Report> DIFF_CALLBACK = new DiffUtil.ItemCallback<Report>() {
         @Override
         public boolean areItemsTheSame(@NonNull Report oldItem, @NonNull Report newItem) {
-            return oldItem.getId().equals(newItem.getId());
+            return Objects.equals(oldItem.getId(), newItem.getId());
         }
 
         @Override
         public boolean areContentsTheSame(@NonNull Report oldItem, @NonNull Report newItem) {
-            return oldItem.getStatus().equalsIgnoreCase(newItem.getStatus()) &&
-                    oldItem.getPriority().equals(newItem.getPriority()) &&
-                    oldItem.getTitle().equals(newItem.getTitle());
+            return Objects.equals(oldItem.getStatus(), newItem.getStatus()) &&
+                    Objects.equals(oldItem.getPriority(), newItem.getPriority()) &&
+                    Objects.equals(oldItem.getTitle(), newItem.getTitle()) &&
+                    Objects.equals(oldItem.getBuilding(), newItem.getBuilding()) &&
+                    oldItem.isFlagged() == newItem.isFlagged() &&
+                    oldItem.isArchived() == newItem.isArchived();
         }
     };
 
@@ -49,8 +54,8 @@ public class ReportAdapter extends ListAdapter<Report, ReportAdapter.ReportViewH
         Report currentReport = getItem(position);
         if (currentReport == null) return;
 
-        holder.textViewTitle.setText(currentReport.getTitle());
-        holder.textViewBuilding.setText(currentReport.getBuilding());
+        holder.textViewTitle.setText(currentReport.getTitle() != null ? currentReport.getTitle() : "No Title");
+        holder.textViewBuilding.setText(currentReport.getBuilding() != null ? currentReport.getBuilding() : "No Location");
         
         String status = currentReport.getStatus() != null ? currentReport.getStatus() : "Pending";
         
@@ -64,6 +69,13 @@ public class ReportAdapter extends ListAdapter<Report, ReportAdapter.ReportViewH
         } else if ("Completed".equalsIgnoreCase(status)) {
             holder.statusPill.setBackgroundResource(R.drawable.bg_pill_completed);
             holder.statusIcon.setImageResource(android.R.drawable.checkbox_on_background);
+        }
+
+        // Flag indicator
+        if (currentReport.isFlagged()) {
+            holder.textViewTitle.setCompoundDrawablesWithIntrinsicBounds(0, 0, android.R.drawable.btn_star_big_on, 0);
+        } else {
+            holder.textViewTitle.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
         }
     }
 

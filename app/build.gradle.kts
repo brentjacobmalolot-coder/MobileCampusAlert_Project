@@ -5,12 +5,15 @@ plugins {
 
 android {
     namespace = "com.example.campusalert"
+    // compileSdk updated to 36 to satisfy the requirements of high-versioned androidx dependencies
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.example.mylog_in"
+        applicationId = "com.example.campusalert"
         minSdk = 24
-        targetSdk = 36
+        // targetSdk kept at 34 to avoid mandatory Edge-to-Edge and other Android 15+ 
+        // behaviors that cause rendering crashes on Transsion (Tecno/Infinix) devices.
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -48,6 +51,7 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(libs.firebase.database)
     implementation(libs.firebase.storage)
+    implementation("com.google.firebase:firebase-messaging")
 
     // Google Auth
     implementation(libs.play.services.auth)

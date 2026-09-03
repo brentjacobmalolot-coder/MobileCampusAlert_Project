@@ -19,6 +19,8 @@ import java.util.Locale;
 
 public class NotificationAdapter extends ListAdapter<Notification, NotificationAdapter.NotificationViewHolder> {
 
+    private OnNotificationActionListener listener;
+
     public NotificationAdapter() {
         super(DIFF_CALLBACK);
     }
@@ -32,7 +34,8 @@ public class NotificationAdapter extends ListAdapter<Notification, NotificationA
         @Override
         public boolean areContentsTheSame(@NonNull Notification oldItem, @NonNull Notification newItem) {
             return oldItem.isRead() == newItem.isRead() && 
-                   oldItem.getMessage().equals(newItem.getMessage());
+                   oldItem.getMessage().equals(newItem.getMessage()) &&
+                   (oldItem.getReportId() == null ? newItem.getReportId() == null : oldItem.getReportId().equals(newItem.getReportId()));
         }
     };
 
@@ -55,7 +58,16 @@ public class NotificationAdapter extends ListAdapter<Notification, NotificationA
         holder.unreadDot.setVisibility(notification.isRead() ? View.GONE : View.VISIBLE);
     }
 
-    static class NotificationViewHolder extends RecyclerView.ViewHolder {
+    public interface OnNotificationActionListener {
+        void onClick(Notification notification);
+        void onLongClick(Notification notification);
+    }
+
+    public void setOnNotificationActionListener(OnNotificationActionListener listener) {
+        this.listener = listener;
+    }
+
+    class NotificationViewHolder extends RecyclerView.ViewHolder {
         TextView title, message, time;
         View unreadDot;
 
@@ -65,6 +77,22 @@ public class NotificationAdapter extends ListAdapter<Notification, NotificationA
             message = itemView.findViewById(R.id.noti_message);
             time = itemView.findViewById(R.id.noti_time);
             unreadDot = itemView.findViewById(R.id.unread_dot);
+
+            itemView.setOnClickListener(v -> {
+                int pos = getAdapterPosition();
+                if (listener != null && pos != RecyclerView.NO_POSITION) {
+                    listener.onClick(getItem(pos));
+                }
+            });
+
+            itemView.setOnLongClickListener(v -> {
+                int pos = getAdapterPosition();
+                if (listener != null && pos != RecyclerView.NO_POSITION) {
+                    listener.onLongClick(getItem(pos));
+                    return true;
+                }
+                return false;
+            });
         }
     }
 }

@@ -3,48 +3,35 @@ package com.example.campusalert.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
-import androidx.security.crypto.EncryptedSharedPreferences;
-import androidx.security.crypto.MasterKeys;
 import com.example.campusalert.models.User;
 import com.example.campusalert.models.UserRole;
-import java.io.IOException;
-import java.security.GeneralSecurityException;
 
 public class SessionManager {
     private static final String TAG = "SessionManager";
-    private static final String PREF_NAME = "CampusAlertSession";
+    private static final String PREF_NAME = "CampusAlertSession_v3";
     private static final String KEY_EMAIL = "email";
     private static final String KEY_ROLE = "role";
     private static final String KEY_NAME = "name";
 
-    private SharedPreferences pref;
-    private SharedPreferences.Editor editor;
+    private final SharedPreferences pref;
+    private final SharedPreferences.Editor editor;
 
     public SessionManager(Context context) {
-        try {
-            String masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC);
-            pref = EncryptedSharedPreferences.create(
-                    PREF_NAME,
-                    masterKeyAlias,
-                    context.getApplicationContext(),
-                    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-                    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-            );
-            editor = pref.edit();
-        } catch (GeneralSecurityException | IOException e) {
-            Log.e(TAG, "EncryptedSharedPreferences failed, falling back to standard prefs", e);
-            pref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-            editor = pref.edit();
-        }
+        pref = context.getApplicationContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        editor = pref.edit();
     }
 
     public void createSession(User user) {
-        if (user == null || user.getRole() == null) return;
+        if (user == null) return;
+        
+        // Use the getRoleEnum() helper to get the normalized enum name
+        String normalizedRole = user.getRoleEnum().name();
         
         editor.putString(KEY_EMAIL, user.getEmail());
-        editor.putString(KEY_ROLE, user.getRole()); // Already a string now
+        editor.putString(KEY_ROLE, normalizedRole);
         editor.putString(KEY_NAME, user.getName());
-        editor.apply();
+        editor.commit(); 
+        Log.d(TAG, "Session created for: " + user.getEmail() + " with normalized role: " + normalizedRole);
     }
 
     public String getUserEmail() {
@@ -54,12 +41,16 @@ public class SessionManager {
     public UserRole getUserRole() {
         String roleStr = pref.getString(KEY_ROLE, null);
         if (roleStr == null) return null;
+        
         try {
-            return UserRole.valueOf(roleStr);
+            return UserRole.valueOf(roleStr.toUpperCase());
         } catch (IllegalArgumentException e) {
-            Log.e(TAG, "Invalid role stored in prefs: " + roleStr);
-            // Fallback for staff naming variations
-            if ("STAFF".equalsIgnoreCase(roleStr)) return UserRole.MAINTENANCE_STAFF;
+            Log.e(TAG, "Invalid role stored: " + roleStr);
+            // Comprehensive fallback for common database variations
+            String normalized = roleStr.toUpperCase();
+            if (normalized.contains("ADMIN")) return UserRole.ADMIN;
+            if (normalized.contains("MAINTENANCE") || normalized.contains("STAFF")) return UserRole.MAINTENANCE_STAFF;
+            if (normalized.contains("STUDENT")) return UserRole.STUDENT;
             return null;
         }
     }
@@ -70,10 +61,12 @@ public class SessionManager {
 
     public void logout() {
         editor.clear();
-        editor.apply();
+        editor.commit();
+        Log.d(TAG, "Session cleared.");
     }
 
     public boolean isLoggedIn() {
-        return getUserEmail() != null && getUserRole() != null;
+        UserRole role = getUserRole();
+        return getUserEmail() != null && role != null;
     }
 }

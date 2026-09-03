@@ -35,6 +35,8 @@ public class TaskAdapter extends ListAdapter<Report, TaskAdapter.TaskViewHolder>
         @Override
         public boolean areContentsTheSame(@NonNull Report oldItem, @NonNull Report newItem) {
             return oldItem.getStatus().equals(newItem.getStatus()) &&
+                    oldItem.isFlagged() == newItem.isFlagged() &&
+                    oldItem.isArchived() == newItem.isArchived() &&
                     (oldItem.getStaffComment() == null ? newItem.getStaffComment() == null : oldItem.getStaffComment().equals(newItem.getStaffComment()));
         }
     };
@@ -62,11 +64,19 @@ public class TaskAdapter extends ListAdapter<Report, TaskAdapter.TaskViewHolder>
         } else {
             holder.btnComplete.setVisibility(View.VISIBLE);
         }
+
+        // Visual indicator for flagged reports
+        if (report.isFlagged()) {
+            holder.title.setCompoundDrawablesWithIntrinsicBounds(0, 0, android.R.drawable.btn_star_big_on, 0);
+        } else {
+            holder.title.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+        }
     }
 
     public interface OnTaskActionListener {
         void onView(Report report);
         void onComplete(Report report);
+        void onManage(Report report);
     }
 
     public void setOnTaskActionListener(OnTaskActionListener listener) {
@@ -98,6 +108,15 @@ public class TaskAdapter extends ListAdapter<Report, TaskAdapter.TaskViewHolder>
                 if (listener != null && pos != RecyclerView.NO_POSITION) {
                     listener.onComplete(getItem(pos));
                 }
+            });
+
+            itemView.setOnLongClickListener(v -> {
+                int pos = getAdapterPosition();
+                if (listener != null && pos != RecyclerView.NO_POSITION) {
+                    listener.onManage(getItem(pos));
+                    return true;
+                }
+                return false;
             });
         }
     }

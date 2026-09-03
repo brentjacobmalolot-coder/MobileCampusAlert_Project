@@ -34,7 +34,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="No new notifications"
+        android:text="@string/no_notifications"
         android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
         android:textColor="@color/sage_green"
         android:visibility="gone" />

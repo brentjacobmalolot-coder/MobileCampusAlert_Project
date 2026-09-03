@@ -20,7 +20,12 @@ public class Report {
     private String userId;   // Email of the student who reported it
     private String staffId;  // Email of the staff assigned
     private String staffComment;
-    private String imageUri; // URI or path of the evidence photo
+    private String imageUrl; // Can be a URL from Storage or a Base64 string
+
+    // Queue Integrity Fields
+    private boolean isArchived = false;
+    private boolean isFlagged = false;
+    private String mergedIntoId = null;
 
     public Report() {
         this.id = ""; // Required for Firebase
@@ -61,6 +66,17 @@ public class Report {
     public void setStaffId(String staffId) { this.staffId = staffId; }
     public String getStaffComment() { return staffComment; }
     public void setStaffComment(String staffComment) { this.staffComment = staffComment; }
-    public String getImageUri() { return imageUri; }
-    public void setImageUri(String imageUri) { this.imageUri = imageUri; }
+    public String getImageUrl() { return imageUrl; }
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+    
+    // Legacy support for older code using getImageUri
+    public String getImageUri() { return imageUrl; }
+    public void setImageUri(String imageUri) { this.imageUrl = imageUri; }
+
+    public boolean isArchived() { return isArchived; }
+    public void setArchived(boolean archived) { isArchived = archived; }
+    public boolean isFlagged() { return isFlagged; }
+    public void setFlagged(boolean flagged) { isFlagged = flagged; }
+    public String getMergedIntoId() { return mergedIntoId; }
+    public void setMergedIntoId(String mergedIntoId) { this.mergedIntoId = mergedIntoId; }
 }

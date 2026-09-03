@@ -142,7 +142,8 @@ public class ReportSubmissionActivity extends AppCompatActivity {
                     ".jpg",
                     getExternalFilesDir(Environment.DIRECTORY_PICTURES)
             );
-            currentPhotoUri = FileProvider.getUriForFile(this, "com.example.campusalert.fileprovider", photoFile);
+            // FIX: Use getPackageName() to match the authority defined in AndroidManifest.xml
+            currentPhotoUri = FileProvider.getUriForFile(this, getPackageName() + ".fileprovider", photoFile);
             mTakePicture.launch(currentPhotoUri);
         } catch (IOException e) {
             Toast.makeText(this, "Failed to create image file", Toast.LENGTH_SHORT).show();
@@ -177,10 +178,11 @@ public class ReportSubmissionActivity extends AppCompatActivity {
                 binding.submitButton.setText(R.string.submit_official_report);
 
                 if (success) {
-                    // Notify Admin
+                    // Notify Admin - fixed to include reportId for management
                     reportViewModel.sendNotification("jaypeezulieta@sccpag.edu.ph", 
                             "New Report Submitted", 
-                            "A new " + category + " issue was reported at " + building);
+                            "A new " + category + " issue was reported at " + building,
+                            report.getId());
                             
                     Toast.makeText(this, R.string.report_submitted, Toast.LENGTH_SHORT).show();
                     finish();
