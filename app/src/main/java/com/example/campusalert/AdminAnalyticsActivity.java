@@ -97,9 +97,6 @@ public class AdminAnalyticsActivity extends AppCompatActivity {
         
         binding.btnSettings.setOnClickListener(v -> 
             startActivity(new Intent(this, SettingsActivity.class)));
-            
-        binding.profileImageAdmin.setOnClickListener(v -> 
-            startActivity(new Intent(this, SettingsActivity.class)));
 
         binding.btnNotifications.setOnClickListener(v -> 
             startActivity(new Intent(this, NotificationsActivity.class)));

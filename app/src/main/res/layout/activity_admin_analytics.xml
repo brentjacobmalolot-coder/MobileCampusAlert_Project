@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F4F7F6"
+    android:clipChildren="false"
     tools:context=".AdminAnalyticsActivity">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -103,36 +104,46 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
+        android:clipChildren="false"
+        android:fillViewport="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="16dp"
+            android:clipChildren="false"
+            android:clipToPadding="false">
 
             <!-- KPI Row 1 -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="-40dp">
+                android:layout_marginTop="8dp"
+                android:paddingBottom="12dp"
+                android:clipChildren="false"
+                android:clipToPadding="false">
 
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginEnd="8dp"
+                    android:layout_marginStart="4dp"
+                    app:cardBackgroundColor="@color/white"
                     app:cardCornerRadius="16dp"
                     app:cardElevation="4dp"
-                    app:strokeWidth="0dp">
+                    app:cardUseCompatPadding="true"
+                    app:strokeWidth="1dp"
+                    app:strokeColor="#EEEEEE">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:padding="16dp"
-                        android:background="#FFFFFF">
+                        android:padding="16dp">
 
                         <ImageView
                             android:layout_width="24dp"
@@ -165,16 +176,19 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginStart="8dp"
+                    android:layout_marginEnd="4dp"
+                    app:cardBackgroundColor="@color/white"
                     app:cardCornerRadius="16dp"
                     app:cardElevation="4dp"
-                    app:strokeWidth="0dp">
+                    app:cardUseCompatPadding="true"
+                    app:strokeWidth="1dp"
+                    app:strokeColor="#EEEEEE">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:padding="16dp"
-                        android:background="#FFFFFF">
+                        android:padding="16dp">
 
                         <ImageView
                             android:layout_width="24dp"
@@ -208,25 +222,30 @@
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginHorizontal="4dp"
+                app:cardBackgroundColor="@color/white"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="4dp"
-                app:strokeWidth="0dp">
+                app:cardUseCompatPadding="true"
+                app:strokeWidth="1dp"
+                app:strokeColor="#EEEEEE">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:padding="16dp"
-                    android:gravity="center_vertical"
-                    android:background="#FFFFFF">
+                    android:gravity="center_vertical">
 
                     <com.google.android.material.card.MaterialCardView
                         android:layout_width="48dp"
                         android:layout_height="48dp"
                         app:cardBackgroundColor="#FFF8E1"
                         app:cardCornerRadius="12dp"
-                        app:cardElevation="0dp">
+                        app:cardElevation="0dp"
+                        app:strokeWidth="1dp"
+                        app:strokeColor="#FFE082">
                         <ImageView
                             android:layout_width="24dp"
                             android:layout_height="24dp"
@@ -276,16 +295,19 @@
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="4dp"
+                app:cardBackgroundColor="@color/white"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="2dp"
-                app:strokeWidth="0dp">
+                app:cardUseCompatPadding="true"
+                app:strokeWidth="1dp"
+                app:strokeColor="#EEEEEE">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="12dp"
-                    android:background="#FFFFFF">
+                    android:padding="12dp">
 
                     <com.github.mikephil.charting.charts.BarChart
                         android:id="@+id/bar_chart_reports"

@@ -150,9 +150,6 @@ public class StudentDashboardActivity extends AppCompatActivity {
         binding.btnSettings.setOnClickListener(v -> 
             startActivity(new Intent(this, SettingsActivity.class)));
             
-        binding.profileImage.setOnClickListener(v -> 
-            startActivity(new Intent(this, SettingsActivity.class)));
-            
         binding.btnViewAll.setOnClickListener(v -> {
             binding.chipAll.setChecked(true);
             filterReports();

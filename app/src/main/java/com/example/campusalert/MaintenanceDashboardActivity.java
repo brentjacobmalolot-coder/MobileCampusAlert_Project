@@ -260,9 +260,6 @@ public class MaintenanceDashboardActivity extends AppCompatActivity {
     private void setupListeners() {
         binding.btnSettings.setOnClickListener(v -> 
             startActivity(new Intent(this, SettingsActivity.class)));
-            
-        binding.profileImageSmall.setOnClickListener(v -> 
-            startActivity(new Intent(this, SettingsActivity.class)));
 
         binding.btnNotifications.setOnClickListener(v -> 
             startActivity(new Intent(this, NotificationsActivity.class)));
