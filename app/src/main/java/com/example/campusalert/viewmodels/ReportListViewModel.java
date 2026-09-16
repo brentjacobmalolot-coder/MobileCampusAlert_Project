@@ -1,26 +1,21 @@
 package com.example.campusalert.viewmodels;
 
-import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.campusalert.models.Report;
 import com.example.campusalert.models.UserRole;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class ReportListViewModel extends ViewModel {
-    private static final String DATABASE_URL = "https://mobile-application-db-321ff-default-rtdb.firebaseio.com/";
-    private final DatabaseReference mDatabase;
+    private final FirebaseFirestore db;
     
     private final MutableLiveData<List<Report>> _reports = new MutableLiveData<>();
     public LiveData<List<Report>> reports = _reports;
@@ -35,7 +30,7 @@ public class ReportListViewModel extends ViewModel {
     private UserRole userRole = null;
 
     public ReportListViewModel() {
-        mDatabase = FirebaseDatabase.getInstance(DATABASE_URL).getReference().child("reports");
+        db = FirebaseFirestore.getInstance();
         searchReports("");
     }
 
@@ -50,34 +45,28 @@ public class ReportListViewModel extends ViewModel {
         
         Query query;
         if (keyword == null || keyword.isEmpty()) {
-            query = mDatabase;
+            query = db.collection("reports");
         } else {
-            // Firebase prefix search on 'title' field
-            query = mDatabase.orderByChild("title").startAt(keyword).endAt(keyword + "\uf8ff");
+            // Firestore prefix search
+            query = db.collection("reports").orderBy("title").startAt(keyword).endAt(keyword + "\uf8ff");
         }
 
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
+        query.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult() != null) {
                 List<Report> list = new ArrayList<>();
-                for (DataSnapshot data : snapshot.getChildren()) {
-                    Report report = data.getValue(Report.class);
+                for (QueryDocumentSnapshot doc : task.getResult()) {
+                    Report report = doc.toObject(Report.class);
                     if (report != null) {
                         if (report.getId() == null || report.getId().isEmpty()) {
-                            report.setId(data.getKey());
+                            report.setId(doc.getId());
                         }
                         list.add(report);
                     }
                 }
                 allFetchedReports = list;
                 applyFilters();
-                _isLoading.setValue(false);
             }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                _isLoading.setValue(false);
-            }
+            _isLoading.setValue(false);
         });
     }
 
@@ -89,9 +78,8 @@ public class ReportListViewModel extends ViewModel {
 
     private void applyFilters() {
         List<Report> filteredList = allFetchedReports.stream()
-            .filter(r -> !r.isArchived() && r.getMergedIntoId() == null) // Queue Integrity: Hide archived/merged
+            .filter(r -> !r.isArchived() && r.getMergedIntoId() == null)
             .filter(r -> {
-                // If student, only show their own reports
                 if (userRole == UserRole.STUDENT && userEmail != null) {
                     return userEmail.equalsIgnoreCase(r.getUserId());
                 }
@@ -99,7 +87,20 @@ public class ReportListViewModel extends ViewModel {
             })
             .filter(r -> selectedCategory == null || selectedCategory.equalsIgnoreCase(r.getCategory()))
             .filter(r -> selectedLocation == null || (r.getBuilding() != null && r.getBuilding().equalsIgnoreCase(selectedLocation)))
+            .sorted((r1, r2) -> {
+                int p1 = getPriorityWeight(r1.getPriority());
+                int p2 = getPriorityWeight(r2.getPriority());
+                if (p1 != p2) return Integer.compare(p1, p2);
+                return Long.compare(r2.getTimestamp(), r1.getTimestamp());
+            })
             .collect(Collectors.toList());
         _reports.setValue(filteredList);
+    }
+
+    private int getPriorityWeight(String priority) {
+        if ("High".equalsIgnoreCase(priority)) return 1;
+        if ("Medium".equalsIgnoreCase(priority) || "Med".equalsIgnoreCase(priority)) return 2;
+        if ("Low".equalsIgnoreCase(priority)) return 3;
+        return 4;
     }
 }

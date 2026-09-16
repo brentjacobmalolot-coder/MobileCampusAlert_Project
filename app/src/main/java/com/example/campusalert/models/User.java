@@ -2,6 +2,7 @@ package com.example.campusalert.models;
 
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 import com.google.firebase.database.Exclude;
 
@@ -14,11 +15,12 @@ public class User {
     private String role; 
     private String fcmToken;
 
-    // No-argument constructor for Firebase
+    // No-argument constructor for Firebase and Room
     public User() {
         this.email = "";
     }
 
+    @Ignore
     public User(@NonNull String email, String name, String role) {
         this.email = email;
         this.name = name;

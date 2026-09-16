@@ -1,10 +1,17 @@
 package com.example.campusalert;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -14,6 +21,7 @@ import com.example.campusalert.models.Report;
 import com.example.campusalert.models.UserRole;
 import com.example.campusalert.utils.SessionManager;
 import com.example.campusalert.viewmodels.ReportViewModel;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +32,14 @@ public class StudentDashboardActivity extends AppCompatActivity {
     private SessionManager sessionManager;
     private ReportAdapter adapter;
     private List<Report> allReports = new ArrayList<>();
+    private FirebaseFirestore db;
+
+    private final ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (!isGranted) {
+                    Toast.makeText(this, "Notifications are disabled. You might miss important alerts.", Toast.LENGTH_LONG).show();
+                }
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +56,8 @@ public class StudentDashboardActivity extends AppCompatActivity {
         binding = DashboardStudentBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        db = FirebaseFirestore.getInstance();
+
         // Dynamic Greeting
         binding.textWelcome.setText("Welcome, " + sessionManager.getUserName());
 
@@ -48,6 +66,31 @@ public class StudentDashboardActivity extends AppCompatActivity {
         setupListeners();
         
         observeData();
+        setupNotificationBadge();
+        requestNotificationPermission();
+    }
+
+    private void requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
+            }
+        }
+    }
+
+    private void setupNotificationBadge() {
+        String email = sessionManager.getUserEmail();
+        if (email == null) return;
+
+        db.collection("notifications")
+                .whereEqualTo("recipientEmail", email)
+                .whereEqualTo("read", false)
+                .addSnapshotListener((value, error) -> {
+                    if (value != null) {
+                        int count = value.size();
+                        binding.notificationBadge.setVisibility(count > 0 ? View.VISIBLE : View.GONE);
+                    }
+                });
     }
 
     private void setupRecyclerView() {

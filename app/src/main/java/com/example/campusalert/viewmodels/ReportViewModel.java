@@ -11,17 +11,20 @@ import com.example.campusalert.database.ReportRepository;
 import com.example.campusalert.models.Report;
 import com.example.campusalert.models.User;
 import com.example.campusalert.database.ReportDao;
+import com.example.campusalert.utils.PriorityClassifier;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.List;
 
 public class ReportViewModel extends AndroidViewModel {
     private final ReportRepository repository;
+    private final PriorityClassifier priorityClassifier;
     private static final String TAG = "ReportViewModel";
 
     public ReportViewModel(@NonNull Application application) {
         super(application);
         repository = new ReportRepository(application);
+        priorityClassifier = new PriorityClassifier(application);
     }
 
     public LiveData<List<Report>> getAllReports() {
@@ -38,6 +41,10 @@ public class ReportViewModel extends AndroidViewModel {
 
     public LiveData<List<Report>> getReportsByStaffAndStatus(String staffId, String status) {
         return repository.getReportsByStaffAndStatus(staffId, status);
+    }
+
+    public LiveData<List<Report>> getReportsByStaffActive(String staffId) {
+        return repository.getReportsByStaffActive(staffId);
     }
 
     public LiveData<List<Report>> getReportsByStatus(String status) {
@@ -84,12 +91,32 @@ public class ReportViewModel extends AndroidViewModel {
         repository.mergeReports(duplicateId, masterId);
     }
 
+    public void incrementViewCount(String reportId) {
+        repository.incrementViewCount(reportId);
+    }
+
     public void sendNotification(String email, String title, String message) {
         repository.sendNotification(email, title, message);
     }
 
     public void sendNotification(String email, String title, String message, String reportId) {
         repository.sendNotification(email, title, message, reportId);
+    }
+
+    public void notifyAdmins(String title, String message, String reportId) {
+        repository.notifyAdmins(title, message, reportId);
+    }
+
+    public String classifyPriority(String description) {
+        return priorityClassifier.classify(description);
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        if (priorityClassifier != null) {
+            priorityClassifier.close();
+        }
     }
 
     /**

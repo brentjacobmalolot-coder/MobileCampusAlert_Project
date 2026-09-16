@@ -11,7 +11,6 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -98,7 +97,7 @@ public class ReportSubmissionActivity extends AppCompatActivity {
     }
 
     private void setupDropdowns() {
-        String[] buildings = {"St. Therese Bldg", "Sports Complex", "Library", "Engineering Hall", "Student Center", "SCC Gym"};
+        String[] buildings = {"St. Therese Bldg", "Library", "Law Library", "SCC Gym", "Canteen"};
         binding.buildingDropdown.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, buildings));
 
         String[] categories = {"Plumbing", "Electrical", "Furniture", "Facilities", "Security", "Other"};
@@ -122,8 +121,14 @@ public class ReportSubmissionActivity extends AppCompatActivity {
         new AlertDialog.Builder(this)
                 .setTitle(R.string.evidence_photo_source)
                 .setItems(options, (dialog, which) -> {
-                    if (which == 0) checkCameraPermission();
-                    else mGetContent.launch("image/*");
+                    switch (which) {
+                        case 0:
+                            checkCameraPermission();
+                            break;
+                        case 1:
+                            mGetContent.launch("image/*");
+                            break;
+                    }
                 }).show();
     }
 
@@ -142,8 +147,8 @@ public class ReportSubmissionActivity extends AppCompatActivity {
                     ".jpg",
                     getExternalFilesDir(Environment.DIRECTORY_PICTURES)
             );
-            // FIX: Use getPackageName() to match the authority defined in AndroidManifest.xml
-            currentPhotoUri = FileProvider.getUriForFile(this, getPackageName() + ".fileprovider", photoFile);
+            // Authority must match AndroidManifest.xml exactly to avoid INSTALL_FAILED_CONFLICTING_PROVIDER
+            currentPhotoUri = FileProvider.getUriForFile(this, getPackageName() + ".unique.campus.fileprovider", photoFile);
             mTakePicture.launch(currentPhotoUri);
         } catch (IOException e) {
             Toast.makeText(this, "Failed to create image file", Toast.LENGTH_SHORT).show();
@@ -153,16 +158,16 @@ public class ReportSubmissionActivity extends AppCompatActivity {
     private void submitReport() {
         String building = binding.buildingDropdown.getText().toString();
         String category = binding.categoryDropdown.getText().toString();
-        String desc = binding.descriptionEdit.getText().toString().trim();
+        
+        String descRaw = binding.descriptionEdit.getText() != null ? binding.descriptionEdit.getText().toString() : "";
+        String desc = descRaw.trim();
 
         if (building.isEmpty() || category.isEmpty() || desc.isEmpty()) {
             Toast.makeText(this, R.string.fill_all_fields, Toast.LENGTH_SHORT).show();
             return;
         }
 
-        String priority = "Medium";
-        if (binding.priorityToggleGroup.getCheckedButtonId() == R.id.btn_low) priority = "Low";
-        else if (binding.priorityToggleGroup.getCheckedButtonId() == R.id.btn_high) priority = "High";
+        String priority = reportViewModel.classifyPriority(desc);
 
         // UI Loading State
         binding.submitButton.setEnabled(false);
@@ -171,31 +176,35 @@ public class ReportSubmissionActivity extends AppCompatActivity {
 
         Report report = new Report(category + " issue", desc, building, category, priority, "Pending", System.currentTimeMillis(), sessionManager.getUserEmail());
 
-        reportViewModel.insert(report, currentPhotoUri, success -> {
-            runOnUiThread(() -> {
-                binding.uploadProgress.setVisibility(View.GONE);
-                binding.submitButton.setEnabled(true);
-                binding.submitButton.setText(R.string.submit_official_report);
+        reportViewModel.insert(report, currentPhotoUri, success -> runOnUiThread(() -> {
+            binding.uploadProgress.setVisibility(View.GONE);
+            binding.submitButton.setEnabled(true);
+            binding.submitButton.setText(R.string.submit_official_report);
 
-                if (success) {
-                    // Notify Admin - fixed to include reportId for management
-                    reportViewModel.sendNotification("jaypeezulieta@sccpag.edu.ph", 
-                            "New Report Submitted", 
-                            "A new " + category + " issue was reported at " + building,
-                            report.getId());
-                            
-                    Toast.makeText(this, R.string.report_submitted, Toast.LENGTH_SHORT).show();
-                    finish();
-                } else {
-                    Toast.makeText(this, "Submission failed. Please check your connection.", Toast.LENGTH_LONG).show();
-                }
-            });
-        });
+            if (success) {
+                // Notify Student
+                reportViewModel.sendNotification(sessionManager.getUserEmail(),
+                        "Report Received",
+                        "Your report for " + building + " has been submitted and is awaiting review.",
+                        report.getId());
+                
+                // Notify All Admins
+                reportViewModel.notifyAdmins(
+                        "New Report Submitted", 
+                        "A new " + category + " issue was reported at " + building,
+                        report.getId());
+                        
+                Toast.makeText(this, R.string.report_submitted, Toast.LENGTH_SHORT).show();
+                finish();
+            } else {
+                Toast.makeText(this, "Submission failed. Please check your connection.", Toast.LENGTH_LONG).show();
+            }
+        }));
     }
 
     @Override
     public boolean onSupportNavigateUp() {
-        onBackPressed();
+        getOnBackPressedDispatcher().onBackPressed();
         return true;
     }
 }

@@ -1,14 +1,21 @@
 package com.example.campusalert;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -21,21 +28,29 @@ import com.example.campusalert.utils.SessionManager;
 import com.example.campusalert.viewmodels.ReportViewModel;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.tabs.TabLayout;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class MaintenanceDashboardActivity extends AppCompatActivity {
     private DashboardMaintenanceBinding binding;
     private ReportViewModel reportViewModel;
     private SessionManager sessionManager;
     private TaskAdapter adapter;
-    private DatabaseReference mDatabase;
-    private static final String DATABASE_URL = "https://mobile-application-db-321ff-default-rtdb.firebaseio.com/";
+    private FirebaseFirestore db;
+    private ListenerRegistration assignmentListener;
+    private final Set<String> shownTasks = new HashSet<>();
+
+    private final ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (!isGranted) {
+                    Toast.makeText(this, "Notifications are disabled. You might miss important alerts.", Toast.LENGTH_LONG).show();
+                }
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,8 +67,8 @@ public class MaintenanceDashboardActivity extends AppCompatActivity {
         binding = DashboardMaintenanceBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        // Initialize Firebase
-        mDatabase = FirebaseDatabase.getInstance(DATABASE_URL).getReference();
+        // Initialize Firebase Firestore
+        db = FirebaseFirestore.getInstance();
 
         // Personalize the dashboard with the staff's name
         binding.collapsingToolbar.setTitle(sessionManager.getUserName());
@@ -65,49 +80,59 @@ public class MaintenanceDashboardActivity extends AppCompatActivity {
         setupListeners();
         
         updateFilter(getString(R.string.assigned));
+        setupNotificationBadge();
+        requestNotificationPermission();
 
         // Start listening for new task assignments
         String userEmail = sessionManager.getUserEmail();
         if (userEmail != null) {
-            startAssignmentListener(sanitizeKey(userEmail));
+            startAssignmentListener(userEmail);
         }
     }
 
-    private void startAssignmentListener(String encodedEmail) {
-        mDatabase.child("assignments").child(encodedEmail)
-                .addChildEventListener(new ChildEventListener() {
-                    @Override
-                    public void onChildAdded(@NonNull DataSnapshot snapshot, String previousChildName) {
-                        TaskAssignment task = snapshot.getValue(TaskAssignment.class);
-                        if (task != null && "Pending".equals(task.getStatus())) {
-                            showAssignmentPrompt(task, snapshot.getRef());
-                        }
-                    }
-
-                    @Override
-                    public void onChildChanged(@NonNull DataSnapshot snapshot, String previousChildName) {}
-
-                    @Override
-                    public void onChildRemoved(@NonNull DataSnapshot snapshot) {}
-
-                    @Override
-                    public void onChildMoved(@NonNull DataSnapshot snapshot, String previousChildName) {}
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
+    private void startAssignmentListener(String userEmail) {
+        assignmentListener = db.collection("assignments").document(userEmail).collection("tasks")
+                .addSnapshotListener((value, error) -> {
+                    if (error != null) {
                         Log.e("MaintenanceDashboard", "Assignment listener failed: " + error.getMessage());
+                        return;
+                    }
+                    if (value != null) {
+                        for (DocumentChange dc : value.getDocumentChanges()) {
+                            TaskAssignment task = dc.getDocument().toObject(TaskAssignment.class);
+                            String taskId = dc.getDocument().getId();
+                            
+                            if (task != null && "Pending".equals(task.getStatus())) {
+                                if (dc.getType() == DocumentChange.Type.ADDED || dc.getType() == DocumentChange.Type.MODIFIED) {
+                                    if (!shownTasks.contains(taskId)) {
+                                        shownTasks.add(taskId);
+                                        showAssignmentPrompt(task, taskId);
+                                    }
+                                }
+                            } else {
+                                // If task is no longer pending, allow it to be shown again if it becomes pending later
+                                shownTasks.remove(taskId);
+                            }
+                        }
                     }
                 });
     }
 
-    private void showAssignmentPrompt(TaskAssignment task, DatabaseReference ref) {
-        new MaterialAlertDialogBuilder(this)
+    private void showAssignmentPrompt(TaskAssignment task, String taskId) {
+        String userEmail = sessionManager.getUserEmail();
+        new MaterialAlertDialogBuilder(this, com.google.android.material.R.style.ThemeOverlay_Material3_MaterialAlertDialog_Centered)
                 .setTitle("🛠️ New Task Assigned")
-                .setMessage("You have been assigned to: " + task.getTitle() + "\n\nDescription: " + task.getDescription())
+                .setIcon(android.R.drawable.ic_dialog_info)
+                .setMessage("You have been assigned a new report.\n\n" +
+                        "Title: " + task.getTitle() + "\n" +
+                        "Location: " + task.getDescription()) // TaskAssignment might have location in description or similar
                 .setCancelable(false)
                 .setPositiveButton("Accept & View", (dialog, which) -> {
-                    // Update task status in Firebase
-                    ref.child("status").setValue("Accepted");
+                    // Update task status in Firestore
+                    if (userEmail != null) {
+                        db.collection("assignments").document(userEmail).collection("tasks")
+                                .document(taskId).update("status", "Accepted");
+                    }
                     
                     // Open Report Detail
                     Intent intent = new Intent(this, ReportDetailActivity.class);
@@ -117,19 +142,21 @@ public class MaintenanceDashboardActivity extends AppCompatActivity {
                     dialog.dismiss();
                 })
                 .setNegativeButton("Dismiss", (dialog, which) -> {
-                    ref.child("status").setValue("Dismissed");
+                    if (userEmail != null) {
+                        db.collection("assignments").document(userEmail).collection("tasks")
+                                .document(taskId).update("status", "Dismissed");
+                    }
                     dialog.dismiss();
                 })
                 .show();
     }
 
-    private String sanitizeKey(String key) {
-        if (key == null) return null;
-        return key.replace(".", ",")
-                  .replace("#", "_")
-                  .replace("$", "_")
-                  .replace("[", "_")
-                  .replace("]", "_");
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (assignmentListener != null) {
+            assignmentListener.remove();
+        }
     }
 
     private void setupRecyclerView() {
@@ -241,20 +268,54 @@ public class MaintenanceDashboardActivity extends AppCompatActivity {
             startActivity(new Intent(this, NotificationsActivity.class)));
     }
 
+    private void setupNotificationBadge() {
+        String email = sessionManager.getUserEmail();
+        if (email == null) return;
+
+        db.collection("notifications")
+                .whereEqualTo("recipientEmail", email)
+                .whereEqualTo("read", false)
+                .addSnapshotListener((value, error) -> {
+                    if (value != null) {
+                        int count = value.size();
+                        binding.notificationBadge.setVisibility(count > 0 ? View.VISIBLE : View.GONE);
+                    }
+                });
+    }
+
     private void updateFilter(String statusTitle) {
         String dbStatus = "Pending";
-        if (getString(R.string.in_progress).equals(statusTitle)) {
+        boolean showAllActive = false;
+
+        if (getString(R.string.assigned).equals(statusTitle)) {
+            showAllActive = true;
+        } else if (getString(R.string.in_progress).equals(statusTitle)) {
             dbStatus = "In Progress";
         } else if (getString(R.string.completed).equals(statusTitle)) {
             dbStatus = "Completed";
         }
 
+        LiveData<List<Report>> reportsLiveData;
+        if (showAllActive) {
+            reportsLiveData = reportViewModel.getReportsByStaffActive(sessionManager.getUserEmail());
+        } else {
+            reportsLiveData = reportViewModel.getReportsByStaffAndStatus(sessionManager.getUserEmail(), dbStatus);
+        }
+
         // Personalized task list: Only show reports assigned to this specific staff member
-        reportViewModel.getReportsByStaffAndStatus(sessionManager.getUserEmail(), dbStatus).observe(this, reports -> {
+        reportsLiveData.observe(this, reports -> {
             if (reports != null) {
                 adapter.submitList(reports);
                 binding.textTaskCount.setText(getString(R.string.task_count_format, statusTitle, reports.size()));
             }
         });
+    }
+
+    private void requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
+            }
+        }
     }
 }

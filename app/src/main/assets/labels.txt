@@ -1,3 +1,4 @@
-Keyboard
-Monitor
-Mouse
+CRITICAL
+HIGH
+MEDIUM
+LOW

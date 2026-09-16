@@ -59,6 +59,20 @@ public class TaskAdapter extends ListAdapter<Report, TaskAdapter.TaskViewHolder>
         SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault());
         holder.date.setText("Reported: " + sdf.format(new Date(report.getTimestamp())));
 
+        // Priority Tag logic
+        String priority = report.getPriority() != null ? report.getPriority() : "Medium";
+        holder.priorityTag.setText(priority.toUpperCase());
+        
+        int priorityColor;
+        if ("High".equalsIgnoreCase(priority)) {
+            priorityColor = holder.itemView.getContext().getColor(R.color.priority_high);
+        } else if ("Low".equalsIgnoreCase(priority)) {
+            priorityColor = holder.itemView.getContext().getColor(R.color.priority_low);
+        } else {
+            priorityColor = holder.itemView.getContext().getColor(R.color.priority_medium);
+        }
+        holder.priorityTag.getBackground().setTint(priorityColor);
+
         if ("Completed".equalsIgnoreCase(report.getStatus())) {
             holder.btnComplete.setVisibility(View.GONE);
         } else {
@@ -84,7 +98,7 @@ public class TaskAdapter extends ListAdapter<Report, TaskAdapter.TaskViewHolder>
     }
 
     class TaskViewHolder extends RecyclerView.ViewHolder {
-        TextView title, location, category, date;
+        TextView title, location, category, date, priorityTag;
         Button btnView, btnComplete;
 
         public TaskViewHolder(@NonNull View itemView) {
@@ -93,6 +107,7 @@ public class TaskAdapter extends ListAdapter<Report, TaskAdapter.TaskViewHolder>
             location = itemView.findViewById(R.id.task_location);
             category = itemView.findViewById(R.id.task_category);
             date = itemView.findViewById(R.id.task_date);
+            priorityTag = itemView.findViewById(R.id.priority_tag);
             btnView = itemView.findViewById(R.id.btn_view_task);
             btnComplete = itemView.findViewById(R.id.btn_complete_task);
 

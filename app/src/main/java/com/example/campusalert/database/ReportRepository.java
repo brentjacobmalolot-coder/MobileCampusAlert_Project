@@ -14,11 +14,9 @@ import androidx.lifecycle.LiveData;
 import com.example.campusalert.models.Notification;
 import com.example.campusalert.models.Report;
 import com.example.campusalert.models.User;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -33,20 +31,18 @@ public class ReportRepository {
     private final ReportDao reportDao;
     private final LiveData<List<Report>> allReports;
     private final LiveData<List<Report>> allActiveReports;
-    private final DatabaseReference mDatabase;
+    private final FirebaseFirestore db;
     private final Context context;
-    // URL without trailing slash for better consistency
-    private static final String DATABASE_URL = "https://mobile-application-db-321ff-default-rtdb.firebaseio.com";
 
     public ReportRepository(Application application) {
         this.context = application.getApplicationContext();
-        AppDatabase db = AppDatabase.getDatabase(application);
-        userDao = db.userDao();
-        reportDao = db.reportDao();
+        AppDatabase database = AppDatabase.getDatabase(application);
+        userDao = database.userDao();
+        reportDao = database.reportDao();
         allReports = reportDao.getAllReports();
         allActiveReports = reportDao.getAllActiveReports();
         
-        mDatabase = FirebaseDatabase.getInstance(DATABASE_URL).getReference();
+        db = FirebaseFirestore.getInstance();
         
         syncReportsFromFirebase();
     }
@@ -69,6 +65,10 @@ public class ReportRepository {
 
     public LiveData<List<Report>> getReportsByStaffAndStatus(String staffId, String status) {
         return reportDao.getReportsByStaffAndStatus(staffId, status);
+    }
+
+    public LiveData<List<Report>> getReportsByStaffActive(String staffId) {
+        return reportDao.getReportsByStaffActive(staffId);
     }
 
     public LiveData<List<Report>> getReportsByStatus(String status) {
@@ -97,12 +97,7 @@ public class ReportRepository {
 
     public void insert(Report report, Uri localImageUri, OnUploadCompleteListener listener) {
         AppDatabase.databaseWriteExecutor.execute(() -> {
-            String key = mDatabase.child("reports").push().getKey();
-            if (key == null) {
-                if (listener != null) listener.onComplete(false);
-                return;
-            }
-            
+            String key = db.collection("reports").document().getId();
             report.setId(key);
 
             if (localImageUri != null) {
@@ -145,7 +140,7 @@ public class ReportRepository {
         AppDatabase.databaseWriteExecutor.execute(() -> {
             try {
                 reportDao.insert(report);
-                mDatabase.child("reports").child(key).setValue(report)
+                db.collection("reports").document(key).set(report)
                         .addOnCompleteListener(task -> {
                             if (listener != null) listener.onComplete(task.isSuccessful());
                         });
@@ -161,7 +156,7 @@ public class ReportRepository {
             try {
                 reportDao.update(report);
                 if (report.getId() != null && !report.getId().isEmpty()) {
-                    mDatabase.child("reports").child(report.getId()).setValue(report);
+                    db.collection("reports").document(report.getId()).set(report);
                 }
             } catch (Exception e) {
                 Log.e(TAG, "Error updating report: " + e.getMessage());
@@ -178,9 +173,9 @@ public class ReportRepository {
                 reportDao.update(report);
                 
                 Map<String, Object> updates = new HashMap<>();
-                updates.put("isArchived", true);
+                updates.put("archived", true);
                 updates.put("status", "Archived");
-                mDatabase.child("reports").child(reportId).updateChildren(updates);
+                db.collection("reports").document(reportId).update(updates);
             }
         });
     }
@@ -191,7 +186,7 @@ public class ReportRepository {
             if (report != null) {
                 report.setFlagged(isFlagged);
                 reportDao.update(report);
-                mDatabase.child("reports").child(reportId).child("isFlagged").setValue(isFlagged);
+                db.collection("reports").document(reportId).update("flagged", isFlagged);
             }
         });
     }
@@ -208,8 +203,22 @@ public class ReportRepository {
                 Map<String, Object> updates = new HashMap<>();
                 updates.put("mergedIntoId", masterId);
                 updates.put("status", "Merged/Duplicate");
-                updates.put("isArchived", true);
-                mDatabase.child("reports").child(duplicateId).updateChildren(updates);
+                updates.put("archived", true);
+                db.collection("reports").document(duplicateId).update(updates);
+            }
+        });
+    }
+
+    public void incrementViewCount(String reportId) {
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            try {
+                reportDao.incrementViewCount(reportId);
+                if (reportId != null && !reportId.isEmpty()) {
+                    db.collection("reports").document(reportId)
+                            .update("viewCount", FieldValue.increment(1));
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "Error incrementing view count: " + e.getMessage());
             }
         });
     }
@@ -218,6 +227,10 @@ public class ReportRepository {
         AppDatabase.databaseWriteExecutor.execute(() -> {
             try {
                 userDao.insert(user);
+                // Also update Firestore to keep it in sync
+                if (user.getEmail() != null) {
+                    db.collection("users").document(user.getEmail()).set(user);
+                }
             } catch (Exception e) {
                 Log.e(TAG, "Error inserting user: " + e.getMessage());
             }
@@ -226,8 +239,7 @@ public class ReportRepository {
 
     public void updateFcmToken(String userId, String token) {
         if (userId != null && token != null) {
-            String sanitizedId = sanitizeKey(userId);
-            mDatabase.child("users").child(sanitizedId).child("fcmToken").setValue(token)
+            db.collection("users").document(userId).update("fcmToken", token)
                     .addOnSuccessListener(aVoid -> Log.d(TAG, "FCM Token updated for user: " + userId))
                     .addOnFailureListener(e -> Log.e(TAG, "Failed to update FCM Token: " + e.getMessage()));
         }
@@ -240,66 +252,68 @@ public class ReportRepository {
     public void sendNotification(String recipientEmail, String title, String message, String reportId) {
         String id = UUID.randomUUID().toString();
         Notification notification = new Notification(id, title, message, System.currentTimeMillis(), recipientEmail, reportId);
-        String encodedEmail = sanitizeKey(recipientEmail);
-        if (encodedEmail != null) {
-            mDatabase.child("notifications").child(encodedEmail).child(id).setValue(notification);
+        if (recipientEmail != null) {
+            db.collection("notifications").document(id).set(notification);
         }
     }
 
-    private String sanitizeKey(String key) {
-        if (key == null) return null;
-        return key.replace(".", ",")
-                  .replace("#", "_")
-                  .replace("$", "_")
-                  .replace("[", "_")
-                  .replace("]", "_");
+    public void notifyAdmins(String title, String message, String reportId) {
+        db.collection("users").whereEqualTo("role", "ADMIN").get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                        User admin = doc.toObject(User.class);
+                        if (admin.getEmail() != null) {
+                            sendNotification(admin.getEmail(), title, message, reportId);
+                        }
+                    }
+                })
+                .addOnFailureListener(e -> Log.e(TAG, "Error notifying admins: " + e.getMessage()));
     }
 
     private void syncReportsFromFirebase() {
-        mDatabase.child("reports").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
+        db.collection("reports").addSnapshotListener((value, error) -> {
+            if (error != null) {
+                Log.e(TAG, "Firestore reports sync failed: " + error.getMessage());
+                return;
+            }
+            if (value != null) {
                 AppDatabase.databaseWriteExecutor.execute(() -> {
                     try {
-                        for (DataSnapshot data : snapshot.getChildren()) {
-                            Report report = data.getValue(Report.class);
+                        for (QueryDocumentSnapshot doc : value) {
+                            Report report = doc.toObject(Report.class);
                             if (report != null) {
                                 if (report.getId() == null || report.getId().isEmpty()) {
-                                    report.setId(data.getKey());
+                                    report.setId(doc.getId());
                                 }
                                 reportDao.insert(report);
                             }
                         }
                     } catch (Exception e) {
-                        Log.e(TAG, "Error during background sync: " + e.getMessage());
+                        Log.e(TAG, "Error during reports sync: " + e.getMessage());
                     }
                 });
             }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e(TAG, "Firebase sync failed: " + error.getMessage());
-            }
         });
 
-        mDatabase.child("users").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
+        db.collection("users").addSnapshotListener((value, error) -> {
+            if (error != null) {
+                Log.e(TAG, "Firestore users sync failed: " + error.getMessage());
+                return;
+            }
+            if (value != null) {
                 AppDatabase.databaseWriteExecutor.execute(() -> {
                     try {
-                        for (DataSnapshot data : snapshot.getChildren()) {
-                            User user = data.getValue(User.class);
+                        for (QueryDocumentSnapshot doc : value) {
+                            User user = doc.toObject(User.class);
                             if (user != null) {
                                 userDao.insert(user);
                             }
                         }
                     } catch (Exception e) {
-                        Log.e(TAG, "Error syncing users: " + e.getMessage());
+                        Log.e(TAG, "Error during users sync: " + e.getMessage());
                     }
                 });
             }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {}
         });
     }
 

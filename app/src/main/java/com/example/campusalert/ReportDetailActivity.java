@@ -28,11 +28,8 @@ import com.example.campusalert.models.UserRole;
 import com.example.campusalert.utils.SessionManager;
 import com.example.campusalert.viewmodels.ReportViewModel;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +41,7 @@ public class ReportDetailActivity extends AppCompatActivity {
     private String reportId;
     private Report currentReport;
     private final List<User> staffList = new ArrayList<>();
-    private static final String DATABASE_URL = "https://mobile-application-db-321ff-default-rtdb.firebaseio.com/";
+    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +51,7 @@ public class ReportDetailActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         sessionManager = new SessionManager(this);
+        db = FirebaseFirestore.getInstance();
         reportViewModel = new ViewModelProvider(this).get(ReportViewModel.class);
 
         reportId = getIntent().getStringExtra("REPORT_ID");
@@ -167,26 +165,28 @@ public class ReportDetailActivity extends AppCompatActivity {
     }
 
     private void setupStaffSpinner() {
-        DatabaseReference roleRef = FirebaseDatabase.getInstance(DATABASE_URL).getReference("permission");
-
-        roleRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
+        // Query users collection for maintenance staff
+        db.collection("users").addSnapshotListener((value, error) -> {
+            if (error != null) {
+                Log.e("ReportDetail", "Error fetching staff: " + error.getMessage());
+                return;
+            }
+            if (value != null) {
                 List<String> displayList = new ArrayList<>();
                 displayList.add("Select Maintenance Staff");
                 staffList.clear();
 
-                for (DataSnapshot userSnap : snapshot.getChildren()) {
-                    String role = userSnap.child("role").getValue(String.class);
-                    String email = userSnap.child("email").getValue(String.class);
-                    String name = userSnap.child("name").getValue(String.class);
-
-                    if (email != null && role != null && 
-                       (role.equalsIgnoreCase("staff") || role.equalsIgnoreCase("maintenance") || role.equalsIgnoreCase("maintanance"))) {
+                for (QueryDocumentSnapshot doc : value) {
+                    User user = doc.toObject(User.class);
+                    String role = user.getRole();
+                    if (role != null && (role.equalsIgnoreCase("maintenance") || 
+                                       role.equalsIgnoreCase("staff") || 
+                                       role.equalsIgnoreCase("MAINTENANCE_STAFF"))) {
                         
-                        String displayName = (name != null && !name.isEmpty()) ? name : email;
+                        String displayName = (user.getName() != null && !user.getName().isEmpty()) 
+                                ? user.getName() : user.getEmail();
                         displayList.add(displayName);
-                        staffList.add(new User(email, displayName, "MAINTENANCE_STAFF"));
+                        staffList.add(user);
                     }
                 }
 
@@ -197,11 +197,6 @@ public class ReportDetailActivity extends AppCompatActivity {
                 );
                 binding.staffSpinner.setAdapter(adapter);
             }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("ReportDetail", "Error fetching staff: " + error.getMessage());
-            }
         });
     }
 
@@ -211,6 +206,8 @@ public class ReportDetailActivity extends AppCompatActivity {
         binding.detailDescription.setText(report.getDescription());
         binding.badgeStatus.setText(report.getStatus().toUpperCase());
         
+        binding.textViewCount.setText(report.getViewCount() + " views");
+        
         binding.textStaffComment.setText(report.getStaffComment() != null && !report.getStaffComment().isEmpty() 
                 ? report.getStaffComment() : "No comments yet from staff.");
 
@@ -219,7 +216,6 @@ public class ReportDetailActivity extends AppCompatActivity {
             binding.cardEvidencePhoto.setVisibility(View.VISIBLE);
             
             if (imageStr.startsWith("data:image")) {
-                // Decode Base64
                 try {
                     String pureBase64 = imageStr.substring(imageStr.indexOf(",") + 1);
                     byte[] decodedString = Base64.decode(pureBase64, Base64.DEFAULT);
@@ -229,7 +225,6 @@ public class ReportDetailActivity extends AppCompatActivity {
                     Log.e("ReportDetail", "Error decoding Base64 image", e);
                 }
             } else {
-                // Load URL (Legacy/Cloud Storage)
                 Glide.with(this).load(imageStr).into(binding.detailImage);
             }
             
@@ -300,7 +295,7 @@ public class ReportDetailActivity extends AppCompatActivity {
         User selectedStaff = null;
         
         for (User u : staffList) {
-            if (u.getName().equals(selectedValue) || u.getEmail().equals(selectedValue)) {
+            if ((u.getName() != null && u.getName().equals(selectedValue)) || u.getEmail().equals(selectedValue)) {
                 selectedStaff = u;
                 break;
             }
@@ -323,29 +318,22 @@ public class ReportDetailActivity extends AppCompatActivity {
                     "Pending"
             );
             
-            // Write to "assignments" node for immediate in-app prompt
-            String encodedStaffEmail = sanitizeKey(selectedStaff.getEmail());
-            FirebaseDatabase.getInstance(DATABASE_URL).getReference("assignments")
-                    .child(encodedStaffEmail)
-                    .child(taskId)
-                    .setValue(assignment);
+            // Write to Firestore "assignments" collection
+            db.collection("assignments").document(selectedStaff.getEmail())
+                    .collection("tasks").document(taskId).set(assignment);
 
             reportViewModel.sendNotification(selectedStaff.getEmail(), "New Task", "Assigned: " + currentReport.getTitle(), taskId);
             reportViewModel.sendNotification(currentReport.getUserId(), "Status Update", "Issue is now handled by " + selectedStaff.getName(), taskId);
+            
+            // Notify other Admins about the assignment
+            reportViewModel.notifyAdmins("Staff Assigned", 
+                    "Staff member " + selectedStaff.getName() + " has been assigned to: " + currentReport.getTitle(),
+                    taskId);
 
             Toast.makeText(this, "Staff assigned successfully", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(this, "Please select a valid staff member", Toast.LENGTH_SHORT).show();
         }
-    }
-
-    private String sanitizeKey(String key) {
-        if (key == null) return null;
-        return key.replace(".", ",")
-                  .replace("#", "_")
-                  .replace("$", "_")
-                  .replace("[", "_")
-                  .replace("]", "_");
     }
 
     private void updateReportStatus() {
@@ -359,7 +347,14 @@ public class ReportDetailActivity extends AppCompatActivity {
         currentReport.setStaffComment(binding.staffCommentEdit.getText().toString().trim());
         reportViewModel.update(currentReport);
         
+        // Notify Student
         reportViewModel.sendNotification(currentReport.getUserId(), "Status Update", "Status changed to: " + newStatus, currentReport.getId());
+        
+        // Notify Admins about the update
+        reportViewModel.notifyAdmins("Report Updated", 
+                "Staff (" + sessionManager.getUserName() + ") updated status to " + newStatus + " for: " + currentReport.getTitle(),
+                currentReport.getId());
+
         Toast.makeText(this, "Report updated", Toast.LENGTH_SHORT).show();
     }
 

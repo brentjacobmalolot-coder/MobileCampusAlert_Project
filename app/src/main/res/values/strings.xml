@@ -90,6 +90,30 @@
     <string name="confirm_updates">Confirm Updates</string>
     <string name="footer_message">Ensuring a safer campus together.</string>
     <string name="no_notifications">No new notifications</string>
+    <string name="pending_issues">Pending Issues</string>
+    <string name="total_engagement">Total Engagement</string>
+    <string name="community_engagement_level">Community Engagement Level</string>
+    <string name="facility_insights">Facility Insights</string>
+    <string name="top_priority_issues">Top Priority Issues</string>
+    <string name="view_details_btn">View Details</string>
+    <string name="admin_analytics">Admin Analytics</string>
+    <string name="notifications">Notifications</string>
+    <string name="settings">Settings</string>
+    <string name="count_zero">0</string>
+    <string name="campus_backdrop">Campus Backdrop</string>
+    <string name="my_profile">My Profile</string>
+    <string name="profile_picture">Profile Picture</string>
+    <string name="full_name_placeholder">Full Name</string>
+    <string name="account_details_header">ACCOUNT DETAILS</string>
+    <string name="primary_email_label">Primary Email</string>
+    <string name="user_email_mock">user@email.com</string>
+    <string name="access_level_label">Access Level</string>
+    <string name="student_role_label">Student</string>
+    <string name="security_header">SECURITY</string>
+    <string name="verified_device_label">Verified Device</string>
+    <string name="active_status_label">Active</string>
+    <string name="sign_out_account_label">Sign Out of Account</string>
+    <string name="app_version_string">CampusAlert • Version 1.0.0</string>
 
     <string name="default_web_client_id">785985058591-tjfo8c878dq8v0aa9p4dcupplvm2qsp4.apps.googleusercontent.com</string>
 </resources>

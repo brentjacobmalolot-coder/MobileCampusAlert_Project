@@ -50,6 +50,7 @@ dependencies {
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.auth)
     implementation(libs.firebase.database)
+    implementation(libs.firebase.firestore)
     implementation(libs.firebase.storage)
     implementation("com.google.firebase:firebase-messaging")
 
@@ -62,6 +63,7 @@ dependencies {
 
     implementation("org.tensorflow:tensorflow-lite:2.14.0")
     implementation("org.tensorflow:tensorflow-lite-support:0.4.4")
+    implementation("org.tensorflow:tensorflow-lite-select-tf-ops:2.14.0")
     
     // Room
     implementation(libs.room.runtime)
@@ -74,8 +76,10 @@ dependencies {
     // Security
     implementation(libs.security.crypto)
 
-    // Maps
-    implementation(libs.play.services.maps)
+
+
+    // Charts
+    implementation(libs.mpandroidchart)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

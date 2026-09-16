@@ -13,6 +13,11 @@
     <color name="institutional_yellow">#FFB300</color>
     <color name="soft_yellow">#FFF8E1</color>
 
+    <!-- Priority Colors -->
+    <color name="priority_high">#D32F2F</color>
+    <color name="priority_medium">#FF9800</color>
+    <color name="priority_low">#1976D2</color>
+
     <color name="primary">@color/forest_green</color>
     <color name="onPrimary">@color/white</color>
     <color name="secondary">@color/sage_green</color>

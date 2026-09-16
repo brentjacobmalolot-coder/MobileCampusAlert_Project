@@ -11,6 +11,8 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
+import com.example.campusalert.utils.SessionManager;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -24,23 +26,41 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         // Handle data payload if present
-        if (remoteMessage.getData().size() > 0) {
+        if (!remoteMessage.getData().isEmpty()) {
             Log.d(TAG, "Message data payload: " + remoteMessage.getData());
+            String title = remoteMessage.getData().get("title");
+            String message = remoteMessage.getData().get("message");
+            if (title != null && message != null) {
+                showNotification(title, message);
+            }
         }
 
         // Handle notification payload
         if (remoteMessage.getNotification() != null) {
             String title = remoteMessage.getNotification().getTitle();
             String body = remoteMessage.getNotification().getBody();
-            showNotification(title != null ? title : "New Assignment", 
-                           body != null ? body : "Check your tasks.");
+            showNotification(title != null ? title : "New Alert",
+                           body != null ? body : "Check your campus alerts.");
         }
     }
 
     @Override
     public void onNewToken(@NonNull String token) {
         Log.d(TAG, "Refreshed token: " + token);
-        // Token update is handled via ReportViewModel/Repository when user logs in.
+        updateTokenInFirestore(token);
+    }
+
+    private void updateTokenInFirestore(String token) {
+        SessionManager sessionManager = new SessionManager(this);
+        String email = sessionManager.getUserEmail();
+        if (email != null) {
+            String encodedEmail = email.replace(".", ",");
+            FirebaseFirestore.getInstance().collection("users")
+                    .document(encodedEmail)
+                    .update("fcmToken", token)
+                    .addOnSuccessListener(aVoid -> Log.d(TAG, "FCM Token updated successfully"))
+                    .addOnFailureListener(e -> Log.e(TAG, "Error updating FCM token", e));
+        }
     }
 
     private void showNotification(String title, String messageBody) {
@@ -65,6 +85,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 .setContentTitle(title)
                 .setContentText(messageBody)
                 .setAutoCancel(true)
+                .setDefaults(NotificationCompat.DEFAULT_ALL)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setContentIntent(pendingIntent);
 

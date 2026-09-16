@@ -1,5 +1,6 @@
 package com.example.campusalert.adapters;
 
+import android.content.res.ColorStateList;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,18 +58,35 @@ public class ReportAdapter extends ListAdapter<Report, ReportAdapter.ReportViewH
         holder.textViewTitle.setText(currentReport.getTitle() != null ? currentReport.getTitle() : "No Title");
         holder.textViewBuilding.setText(currentReport.getBuilding() != null ? currentReport.getBuilding() : "No Location");
         
+        // Priority Tag logic
+        String priority = currentReport.getPriority() != null ? currentReport.getPriority() : "Medium";
+        holder.priorityTag.setText(priority.toUpperCase());
+        
+        int priorityColor;
+        if ("High".equalsIgnoreCase(priority)) {
+            priorityColor = holder.itemView.getContext().getColor(R.color.priority_high);
+        } else if ("Low".equalsIgnoreCase(priority)) {
+            priorityColor = holder.itemView.getContext().getColor(R.color.priority_low);
+        } else {
+            priorityColor = holder.itemView.getContext().getColor(R.color.priority_medium);
+        }
+        holder.priorityTag.getBackground().setTint(priorityColor);
+
         String status = currentReport.getStatus() != null ? currentReport.getStatus() : "Pending";
         
         // Dynamic styling for status
         if ("Pending".equalsIgnoreCase(status)) {
-            holder.statusPill.setBackgroundResource(R.drawable.bg_pill_pending);
+            holder.statusPill.setBackgroundTintList(ColorStateList.valueOf(holder.itemView.getContext().getColor(R.color.soft_yellow)));
             holder.statusIcon.setImageResource(android.R.drawable.ic_menu_info_details);
+            holder.statusIcon.setColorFilter(holder.itemView.getContext().getColor(R.color.institutional_yellow));
         } else if ("In Progress".equalsIgnoreCase(status)) {
-            holder.statusPill.setBackgroundResource(R.drawable.bg_pill_progress);
+            holder.statusPill.setBackgroundTintList(ColorStateList.valueOf(holder.itemView.getContext().getColor(R.color.soft_sage)));
             holder.statusIcon.setImageResource(android.R.drawable.ic_menu_edit);
+            holder.statusIcon.setColorFilter(holder.itemView.getContext().getColor(R.color.forest_green));
         } else if ("Completed".equalsIgnoreCase(status)) {
-            holder.statusPill.setBackgroundResource(R.drawable.bg_pill_completed);
+            holder.statusPill.setBackgroundTintList(ColorStateList.valueOf(holder.itemView.getContext().getColor(R.color.forest_green)));
             holder.statusIcon.setImageResource(android.R.drawable.checkbox_on_background);
+            holder.statusIcon.setColorFilter(holder.itemView.getContext().getColor(R.color.white));
         }
 
         // Flag indicator
@@ -90,6 +108,7 @@ public class ReportAdapter extends ListAdapter<Report, ReportAdapter.ReportViewH
     class ReportViewHolder extends RecyclerView.ViewHolder {
         private final TextView textViewTitle;
         private final TextView textViewBuilding;
+        private final TextView priorityTag;
         private final View statusPill;
         private final ImageView statusIcon;
 
@@ -97,6 +116,7 @@ public class ReportAdapter extends ListAdapter<Report, ReportAdapter.ReportViewH
             super(itemView);
             textViewTitle = itemView.findViewById(R.id.report_title);
             textViewBuilding = itemView.findViewById(R.id.report_building);
+            priorityTag = itemView.findViewById(R.id.priority_tag);
             statusPill = itemView.findViewById(R.id.status_pill);
             statusIcon = itemView.findViewById(R.id.status_icon);
 

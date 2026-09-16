@@ -2,6 +2,7 @@ package com.example.campusalert.models;
 
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "reports")
@@ -21,6 +22,7 @@ public class Report {
     private String staffId;  // Email of the staff assigned
     private String staffComment;
     private String imageUrl; // Can be a URL from Storage or a Base64 string
+    private long viewCount = 0;
 
     // Queue Integrity Fields
     private boolean isArchived = false;
@@ -31,6 +33,7 @@ public class Report {
         this.id = ""; // Required for Firebase
     }
 
+    @Ignore
     public Report(String title, String description, String building, String category, String priority, String status, long timestamp, String userId) {
         this.id = ""; // Initialized empty, set later by Firebase/Repository
         this.title = title;
@@ -68,6 +71,16 @@ public class Report {
     public void setStaffComment(String staffComment) { this.staffComment = staffComment; }
     public String getImageUrl() { return imageUrl; }
     public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+    
+    public long getViewCount() { return viewCount; }
+    public void setViewCount(long viewCount) { this.viewCount = viewCount; }
+
+    public double getEngagementScore() {
+        int priorityWeight = 1;
+        if ("High".equalsIgnoreCase(priority)) priorityWeight = 3;
+        else if ("Medium".equalsIgnoreCase(priority) || "Med".equalsIgnoreCase(priority)) priorityWeight = 2;
+        return viewCount * priorityWeight;
+    }
     
     // Legacy support for older code using getImageUri
     public String getImageUri() { return imageUrl; }

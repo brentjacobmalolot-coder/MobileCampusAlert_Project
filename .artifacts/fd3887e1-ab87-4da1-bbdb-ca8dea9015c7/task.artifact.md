@@ -1,0 +1,4 @@
+- [x] Update `ReportDao.java` with `getReportsByStaffActive` query
+- [x] Update `ReportRepository.java` to expose `getReportsByStaffActive`
+- [x] Update `ReportViewModel.java` to expose `getReportsByStaffActive`
+- [x] Update `MaintenanceDashboardActivity.java` to use `getReportsByStaffActive` in `updateFilter`

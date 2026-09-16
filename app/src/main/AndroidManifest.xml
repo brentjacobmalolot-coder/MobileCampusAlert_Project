@@ -17,7 +17,7 @@
         </intent>
     </queries>
 
-    <!-- Global hardwareAccelerated="false" to prevent OpenGL swap behavior errors on Transsion devices -->
+    <!-- Enable hardware acceleration to prevent Binder transaction failures on Recents snapshot capture -->
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -27,7 +27,8 @@
         android:roundIcon="@mipmap/mainscclogo"
         android:supportsRtl="true"
         android:theme="@style/Theme.CampusAlert"
-        android:hardwareAccelerated="false">
+        android:hardwareAccelerated="true"
+        android:largeHeap="true">
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -35,7 +36,7 @@
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="${applicationId}.fileprovider"
+            android:authorities="${applicationId}.unique.campus.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
@@ -46,7 +47,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:hardwareAccelerated="false"
+            android:hardwareAccelerated="true"
             android:screenOrientation="portrait"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden">
             <intent-filter>
@@ -55,14 +56,14 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".StudentDashboardActivity" android:hardwareAccelerated="false" android:screenOrientation="portrait" />
-        <activity android:name=".ReportSubmissionActivity" android:hardwareAccelerated="false" android:screenOrientation="portrait" />
-        <activity android:name=".ReportDetailActivity" android:hardwareAccelerated="false" android:screenOrientation="portrait" />
-        <activity android:name=".MaintenanceDashboardActivity" android:hardwareAccelerated="false" android:screenOrientation="portrait" />
-        <activity android:name=".AdminAnalyticsActivity" android:hardwareAccelerated="false" android:screenOrientation="portrait" />
-        <activity android:name=".SettingsActivity" android:hardwareAccelerated="false" android:screenOrientation="portrait" />
-        <activity android:name=".NotificationsActivity" android:hardwareAccelerated="false" android:screenOrientation="portrait" />
-        <activity android:name=".ReportListActivity" android:hardwareAccelerated="false" android:screenOrientation="portrait" />
+        <activity android:name=".StudentDashboardActivity" android:hardwareAccelerated="true" android:screenOrientation="portrait" />
+        <activity android:name=".ReportSubmissionActivity" android:hardwareAccelerated="true" android:screenOrientation="portrait" />
+        <activity android:name=".ReportDetailActivity" android:hardwareAccelerated="true" android:screenOrientation="portrait" />
+        <activity android:name=".MaintenanceDashboardActivity" android:hardwareAccelerated="true" android:screenOrientation="portrait" />
+        <activity android:name=".AdminAnalyticsActivity" android:hardwareAccelerated="true" android:screenOrientation="portrait" />
+        <activity android:name=".SettingsActivity" android:hardwareAccelerated="true" android:screenOrientation="portrait" />
+        <activity android:name=".NotificationsActivity" android:hardwareAccelerated="true" android:screenOrientation="portrait" />
+        <activity android:name=".ReportListActivity" android:hardwareAccelerated="true" android:screenOrientation="portrait" />
 
         <service
             android:name=".MyFirebaseMessagingService"

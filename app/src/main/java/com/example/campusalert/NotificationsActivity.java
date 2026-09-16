@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -23,24 +22,27 @@ import com.example.campusalert.models.UserRole;
 import com.example.campusalert.utils.SessionManager;
 import com.example.campusalert.viewmodels.ReportViewModel;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class NotificationsActivity extends AppCompatActivity {
     private ActivityNotificationsBinding binding;
     private NotificationAdapter adapter;
     private SessionManager sessionManager;
     private ReportViewModel reportViewModel;
-    private DatabaseReference mDatabase;
-    private static final String DATABASE_URL = "https://mobile-application-db-321ff-default-rtdb.firebaseio.com/";
+    private FirebaseFirestore db;
+    private ListenerRegistration notificationListener;
+    private ListenerRegistration assignmentListener;
+    private final Set<String> shownTasks = new HashSet<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +51,7 @@ public class NotificationsActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         sessionManager = new SessionManager(this);
-        mDatabase = FirebaseDatabase.getInstance(DATABASE_URL).getReference();
+        db = FirebaseFirestore.getInstance();
         reportViewModel = new ViewModelProvider(this).get(ReportViewModel.class);
 
         setupToolbar();
@@ -59,7 +61,7 @@ public class NotificationsActivity extends AppCompatActivity {
         if (sessionManager.getUserRole() == UserRole.MAINTENANCE_STAFF) {
             String email = sessionManager.getUserEmail();
             if (email != null) {
-                startAssignmentListener(sanitizeKey(email));
+                startAssignmentListener(email);
             }
         }
     }
@@ -79,6 +81,11 @@ public class NotificationsActivity extends AppCompatActivity {
         adapter.setOnNotificationActionListener(new NotificationAdapter.OnNotificationActionListener() {
             @Override
             public void onClick(Notification notification) {
+                // Mark as read when clicked
+                if (!notification.isRead()) {
+                    db.collection("notifications").document(notification.getId()).update("read", true);
+                }
+                
                 if (notification.getReportId() != null) {
                     Intent intent = new Intent(NotificationsActivity.this, ReportDetailActivity.class);
                     intent.putExtra("REPORT_ID", notification.getReportId());
@@ -153,73 +160,88 @@ public class NotificationsActivity extends AppCompatActivity {
                 .show();
     }
 
-    private void startAssignmentListener(String encodedEmail) {
-        mDatabase.child("assignments").child(encodedEmail)
-                .addChildEventListener(new ChildEventListener() {
-                    @Override
-                    public void onChildAdded(@NonNull DataSnapshot snapshot, String previousChildName) {
-                        TaskAssignment task = snapshot.getValue(TaskAssignment.class);
-                        if (task != null && "Pending".equals(task.getStatus())) {
-                            showAssignmentPrompt(task, snapshot.getRef());
+    private void startAssignmentListener(String userEmail) {
+        assignmentListener = db.collection("assignments").document(userEmail).collection("tasks")
+                .addSnapshotListener((value, error) -> {
+                    if (error != null) {
+                        Log.e("Notifications", "Assignment listener failed: " + error.getMessage());
+                        return;
+                    }
+                    if (value != null) {
+                        for (DocumentChange dc : value.getDocumentChanges()) {
+                            TaskAssignment task = dc.getDocument().toObject(TaskAssignment.class);
+                            String taskId = dc.getDocument().getId();
+                            
+                            if (task != null && "Pending".equals(task.getStatus())) {
+                                if (dc.getType() == DocumentChange.Type.ADDED || dc.getType() == DocumentChange.Type.MODIFIED) {
+                                    if (!shownTasks.contains(taskId)) {
+                                        shownTasks.add(taskId);
+                                        showAssignmentPrompt(task, taskId);
+                                    }
+                                }
+                            } else {
+                                shownTasks.remove(taskId);
+                            }
                         }
                     }
-                    @Override
-                    public void onChildChanged(@NonNull DataSnapshot snapshot, String previousChildName) {}
-                    @Override
-                    public void onChildRemoved(@NonNull DataSnapshot snapshot) {}
-                    @Override
-                    public void onChildMoved(@NonNull DataSnapshot snapshot, String previousChildName) {}
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {}
                 });
     }
 
-    private void showAssignmentPrompt(TaskAssignment task, DatabaseReference ref) {
+    private void showAssignmentPrompt(TaskAssignment task, String taskId) {
+        String userEmail = sessionManager.getUserEmail();
         new MaterialAlertDialogBuilder(this)
                 .setTitle("🛠️ New Task Assigned")
                 .setMessage("Task: " + task.getTitle())
                 .setCancelable(false)
                 .setPositiveButton("Accept", (dialog, which) -> {
-                    ref.child("status").setValue("Accepted");
+                    if (userEmail != null) {
+                        db.collection("assignments").document(userEmail).collection("tasks")
+                                .document(taskId).update("status", "Accepted");
+                    }
                     Intent intent = new Intent(this, ReportDetailActivity.class);
                     intent.putExtra("REPORT_ID", task.getId());
                     startActivity(intent);
                 })
-                .setNegativeButton("Dismiss", (dialog, which) -> ref.child("status").setValue("Dismissed"))
+                .setNegativeButton("Dismiss", (dialog, which) -> {
+                    if (userEmail != null) {
+                        db.collection("assignments").document(userEmail).collection("tasks")
+                                .document(taskId).update("status", "Dismissed");
+                    }
+                })
                 .show();
-    }
-
-    private String sanitizeKey(String key) {
-        if (key == null) return null;
-        return key.replace(".", ",").replace("#", "_").replace("$", "_").replace("[", "_").replace("]", "_");
     }
 
     private void loadNotifications() {
         String email = sessionManager.getUserEmail();
         if (email == null) return;
         
-        String encodedEmail = sanitizeKey(email);
-        mDatabase.child("notifications").child(encodedEmail)
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+        notificationListener = db.collection("notifications")
+                .whereEqualTo("recipientEmail", email)
+                .orderBy("timestamp", Query.Direction.DESCENDING)
+                .addSnapshotListener((value, error) -> {
+                    if (error != null) {
+                        Log.e("Notifications", "Error loading notifications: " + error.getMessage());
+                        return;
+                    }
+                    if (value != null) {
                         List<Notification> notifications = new ArrayList<>();
-                        for (DataSnapshot data : snapshot.getChildren()) {
-                            Notification n = data.getValue(Notification.class);
+                        for (QueryDocumentSnapshot doc : value) {
+                            Notification n = doc.toObject(Notification.class);
                             if (n != null) {
                                 notifications.add(n);
-                                if (!n.isRead()) {
-                                    data.getRef().child("read").setValue(true);
-                                }
                             }
                         }
-                        Collections.reverse(notifications);
                         adapter.submitList(notifications);
                         binding.textNoNotifications.setVisibility(notifications.isEmpty() ? View.VISIBLE : View.GONE);
                     }
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {}
                 });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (notificationListener != null) notificationListener.remove();
+        if (assignmentListener != null) assignmentListener.remove();
     }
 
     @Override

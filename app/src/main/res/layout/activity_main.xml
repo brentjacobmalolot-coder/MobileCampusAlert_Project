@@ -11,9 +11,11 @@
     <!-- Fixed Background Header Section -->
     <FrameLayout
         android:id="@+id/fixed_header"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintHeight_percent="0.45"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
@@ -34,10 +36,12 @@
 
     <!-- Scrollable Content Section -->
     <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         android:clipToPadding="false"
         android:scrollbars="none"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
 
@@ -49,20 +53,23 @@
             <!-- Spacer to move content down -->
             <View
                 android:id="@+id/top_spacer"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="180dp"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <!-- Sleek Login Card -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/login_card"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="24dp"
                 app:cardCornerRadius="32dp"
                 app:cardElevation="12dp"
                 app:strokeWidth="0dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/top_spacer">
 
                 <LinearLayout
@@ -114,8 +121,6 @@
                             android:layout_height="wrap_content"
                             android:inputType="textEmailAddress"
                             android:autofillHints="emailAddress"
-                            android:paddingStart="48dp"
-                            android:paddingEnd="16dp"
                             android:textColor="@color/black" />
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -142,8 +147,6 @@
                             android:layout_height="wrap_content"
                             android:inputType="textPassword"
                             android:autofillHints="password"
-                            android:paddingStart="48dp"
-                            android:paddingEnd="48dp"
                             android:textColor="@color/black" />
                     </com.google.android.material.textfield.TextInputLayout>
 

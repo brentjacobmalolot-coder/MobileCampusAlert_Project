@@ -16,9 +16,9 @@ import java.util.concurrent.Executors;
 
 /**
  * Main database class for CampusAlert.
- * Version 47: Added queue integrity fields to Report model.
+ * Version 48: Added viewCount field to Report model.
  */
-@Database(entities = {User.class, Report.class}, version = 47, exportSchema = false)
+@Database(entities = {User.class, Report.class}, version = 48, exportSchema = false)
 @TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
 

@@ -19,22 +19,25 @@ public interface ReportDao {
     @Update
     void update(Report report);
 
-    @Query("SELECT * FROM reports WHERE isArchived = 0 AND mergedIntoId IS NULL ORDER BY timestamp DESC")
+    @Query("SELECT * FROM reports WHERE isArchived = 0 AND mergedIntoId IS NULL ORDER BY CASE priority WHEN 'High' THEN 1 WHEN 'Medium' THEN 2 WHEN 'Low' THEN 3 ELSE 4 END, timestamp DESC")
     LiveData<List<Report>> getAllActiveReports();
 
-    @Query("SELECT * FROM reports ORDER BY timestamp DESC")
+    @Query("SELECT * FROM reports ORDER BY CASE priority WHEN 'High' THEN 1 WHEN 'Medium' THEN 2 WHEN 'Low' THEN 3 ELSE 4 END, timestamp DESC")
     LiveData<List<Report>> getAllReports();
 
-    @Query("SELECT * FROM reports WHERE userId = :userId AND isArchived = 0 ORDER BY timestamp DESC")
+    @Query("SELECT * FROM reports WHERE userId = :userId AND isArchived = 0 ORDER BY CASE priority WHEN 'High' THEN 1 WHEN 'Medium' THEN 2 WHEN 'Low' THEN 3 ELSE 4 END, timestamp DESC")
     LiveData<List<Report>> getReportsByStudent(String userId);
 
-    @Query("SELECT * FROM reports WHERE staffId = :staffId AND isArchived = 0 ORDER BY timestamp DESC")
+    @Query("SELECT * FROM reports WHERE staffId = :staffId AND isArchived = 0 ORDER BY CASE priority WHEN 'High' THEN 1 WHEN 'Medium' THEN 2 WHEN 'Low' THEN 3 ELSE 4 END, timestamp DESC")
     LiveData<List<Report>> getReportsByStaff(String staffId);
 
-    @Query("SELECT * FROM reports WHERE staffId = :staffId AND status = :status AND isArchived = 0 ORDER BY timestamp DESC")
+    @Query("SELECT * FROM reports WHERE staffId = :staffId AND status = :status AND isArchived = 0 ORDER BY CASE priority WHEN 'High' THEN 1 WHEN 'Medium' THEN 2 WHEN 'Low' THEN 3 ELSE 4 END, timestamp DESC")
     LiveData<List<Report>> getReportsByStaffAndStatus(String staffId, String status);
 
-    @Query("SELECT * FROM reports WHERE status = :status AND isArchived = 0 ORDER BY timestamp DESC")
+    @Query("SELECT * FROM reports WHERE staffId = :staffId AND status != 'Completed' AND isArchived = 0 ORDER BY CASE priority WHEN 'High' THEN 1 WHEN 'Medium' THEN 2 WHEN 'Low' THEN 3 ELSE 4 END, timestamp DESC")
+    LiveData<List<Report>> getReportsByStaffActive(String staffId);
+
+    @Query("SELECT * FROM reports WHERE status = :status AND isArchived = 0 ORDER BY CASE priority WHEN 'High' THEN 1 WHEN 'Medium' THEN 2 WHEN 'Low' THEN 3 ELSE 4 END, timestamp DESC")
     LiveData<List<Report>> getReportsByStatus(String status);
     
     @Query("SELECT * FROM reports WHERE id = :reportId")
@@ -48,6 +51,9 @@ public interface ReportDao {
 
     @Query("SELECT COUNT(*) FROM reports")
     LiveData<Integer> getTotalReportsCount();
+
+    @Query("UPDATE reports SET viewCount = viewCount + 1 WHERE id = :reportId")
+    void incrementViewCount(String reportId);
 
     @Query("SELECT category, COUNT(*) as count FROM reports WHERE isArchived = 0 GROUP BY category")
     LiveData<List<CategoryCount>> getReportsByCategory();
