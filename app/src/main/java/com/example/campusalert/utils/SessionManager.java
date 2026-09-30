@@ -12,6 +12,7 @@ public class SessionManager {
     private static final String KEY_EMAIL = "email";
     private static final String KEY_ROLE = "role";
     private static final String KEY_NAME = "name";
+    private static final String KEY_REMEMBERED_EMAIL = "remembered_email";
 
     private final SharedPreferences pref;
     private final SharedPreferences.Editor editor;
@@ -30,12 +31,19 @@ public class SessionManager {
         editor.putString(KEY_EMAIL, user.getEmail());
         editor.putString(KEY_ROLE, normalizedRole);
         editor.putString(KEY_NAME, user.getName());
+        if (user.getEmail() != null && !user.getEmail().isEmpty()) {
+            editor.putString(KEY_REMEMBERED_EMAIL, user.getEmail());
+        }
         editor.commit(); 
         Log.d(TAG, "Session created for: " + user.getEmail() + " with normalized role: " + normalizedRole);
     }
 
     public String getUserEmail() {
         return pref.getString(KEY_EMAIL, null);
+    }
+
+    public String getRememberedEmail() {
+        return pref.getString(KEY_REMEMBERED_EMAIL, null);
     }
 
     public UserRole getUserRole() {
@@ -57,6 +65,17 @@ public class SessionManager {
 
     public String getUserName() {
         return pref.getString(KEY_NAME, "User");
+    }
+
+    /**
+     * Ends active session without deleting saved account credentials / remembered email.
+     */
+    public void clearActiveSession() {
+        editor.remove(KEY_EMAIL);
+        editor.remove(KEY_ROLE);
+        editor.remove(KEY_NAME);
+        editor.commit();
+        Log.d(TAG, "Active session securely closed. Saved credentials retained.");
     }
 
     public void logout() {

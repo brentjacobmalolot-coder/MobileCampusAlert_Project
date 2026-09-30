@@ -20,6 +20,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.campusalert.databinding.ActivityReportSubmissionBinding;
 import com.example.campusalert.models.Report;
 import com.example.campusalert.models.UserRole;
+import com.example.campusalert.utils.SecurityUtils;
 import com.example.campusalert.utils.SessionManager;
 import com.example.campusalert.viewmodels.ReportViewModel;
 
@@ -33,7 +34,7 @@ import java.util.Locale;
  * Optimized Activity for report submission.
  * Supports camera capture, gallery picking, and Firebase integration with Admin notifications.
  */
-public class ReportSubmissionActivity extends AppCompatActivity {
+public class ReportSubmissionActivity extends BaseActivity {
     private ActivityReportSubmissionBinding binding;
     private ReportViewModel reportViewModel;
     private SessionManager sessionManager;
@@ -73,7 +74,8 @@ public class ReportSubmissionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         sessionManager = new SessionManager(this);
-        if (!sessionManager.isLoggedIn() || sessionManager.getUserRole() != UserRole.STUDENT) {
+        String userEmail = sessionManager.getUserEmail();
+        if (!sessionManager.isLoggedIn() || sessionManager.getUserRole() != UserRole.STUDENT || !SecurityUtils.isInstitutionalStudentEmail(userEmail)) {
             finish();
             return;
         }

@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import java.io.File;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -44,7 +45,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class AdminAnalyticsActivity extends AppCompatActivity {
+public class AdminAnalyticsActivity extends BaseActivity {
     private ActivityAdminAnalyticsBinding binding;
     private ReportViewModel reportViewModel;
     private SessionManager sessionManager;
@@ -212,6 +213,12 @@ public class AdminAnalyticsActivity extends AppCompatActivity {
             }
         }
 
+        if (entries.isEmpty()) {
+            binding.barChartReports.clear();
+            binding.barChartReports.setNoDataText("No data available for analysis");
+            return;
+        }
+
         BarDataSet dataSet = new BarDataSet(entries, "Reports by Category");
         
         // Use a more professional color palette
@@ -272,9 +279,16 @@ public class AdminAnalyticsActivity extends AppCompatActivity {
         ContentValues contentValues = new ContentValues();
         contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, "CampusAlert_Export_" + System.currentTimeMillis() + ".csv");
         contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "text/csv");
-        contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS);
 
-        Uri uri = getContentResolver().insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, contentValues);
+        Uri uri = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS);
+            uri = getContentResolver().insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, contentValues);
+        } else {
+            File downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+            File file = new File(downloadsDir, "CampusAlert_Export_" + System.currentTimeMillis() + ".csv");
+            uri = Uri.fromFile(file);
+        }
         if (uri != null) {
             try (OutputStream stream = getContentResolver().openOutputStream(uri)) {
                 if (stream != null) {

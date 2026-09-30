@@ -10,7 +10,6 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -19,6 +18,7 @@ import com.example.campusalert.adapters.ReportAdapter;
 import com.example.campusalert.databinding.DashboardStudentBinding;
 import com.example.campusalert.models.Report;
 import com.example.campusalert.models.UserRole;
+import com.example.campusalert.utils.SecurityUtils;
 import com.example.campusalert.utils.SessionManager;
 import com.example.campusalert.viewmodels.ReportViewModel;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -26,7 +26,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StudentDashboardActivity extends AppCompatActivity {
+public class StudentDashboardActivity extends BaseActivity {
     private DashboardStudentBinding binding;
     private ReportViewModel reportViewModel;
     private SessionManager sessionManager;
@@ -46,8 +46,10 @@ public class StudentDashboardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         
         sessionManager = new SessionManager(this);
+        String userEmail = sessionManager.getUserEmail();
         // Security check
-        if (!sessionManager.isLoggedIn() || sessionManager.getUserRole() != UserRole.STUDENT) {
+        if (!sessionManager.isLoggedIn() || sessionManager.getUserRole() != UserRole.STUDENT || !SecurityUtils.isInstitutionalStudentEmail(userEmail)) {
+            sessionManager.logout();
             startActivity(new Intent(this, MainActivity.class));
             finish();
             return;

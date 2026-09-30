@@ -36,7 +36,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class MaintenanceDashboardActivity extends AppCompatActivity {
+public class MaintenanceDashboardActivity extends BaseActivity {
     private DashboardMaintenanceBinding binding;
     private ReportViewModel reportViewModel;
     private SessionManager sessionManager;

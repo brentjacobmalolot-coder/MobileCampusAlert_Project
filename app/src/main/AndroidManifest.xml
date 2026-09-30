@@ -28,7 +28,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CampusAlert"
         android:hardwareAccelerated="true"
-        android:largeHeap="true">
+        android:largeHeap="true"
+        android:extractNativeLibs="true">
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

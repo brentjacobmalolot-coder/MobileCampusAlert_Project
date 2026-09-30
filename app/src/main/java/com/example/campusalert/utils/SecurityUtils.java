@@ -26,4 +26,10 @@ public class SecurityUtils {
         }
         return hexString.toString();
     }
+
+    public static boolean isInstitutionalStudentEmail(String email) {
+        if (email == null) return false;
+        String lower = email.trim().toLowerCase();
+        return lower.endsWith("sccpag.edu.ph");
+    }
 }

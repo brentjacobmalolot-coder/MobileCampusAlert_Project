@@ -5,14 +5,11 @@ plugins {
 
 android {
     namespace = "com.example.campusalert"
-    // compileSdk updated to 36 to satisfy the requirements of high-versioned androidx dependencies
     compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.campusalert"
         minSdk = 24
-        // targetSdk kept at 34 to avoid mandatory Edge-to-Edge and other Android 15+ 
-        // behaviors that cause rendering crashes on Transsion (Tecno/Infinix) devices.
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -30,12 +27,22 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     viewBinding {
         enable = true
+    }
+
+    androidResources {
+        noCompress += "tflite"
+    }
+
+    packaging {
+        jniLibs {
+            useLegacyPackaging = true
+        }
     }
 }
 
@@ -61,9 +68,9 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.16.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
 
-    implementation("org.tensorflow:tensorflow-lite:2.14.0")
+    implementation("org.tensorflow:tensorflow-lite:2.16.1")
     implementation("org.tensorflow:tensorflow-lite-support:0.4.4")
-    implementation("org.tensorflow:tensorflow-lite-select-tf-ops:2.14.0")
+    implementation("org.tensorflow:tensorflow-lite-select-tf-ops:2.16.1")
     
     // Room
     implementation(libs.room.runtime)
@@ -75,6 +82,9 @@ dependencies {
 
     // Security
     implementation(libs.security.crypto)
+
+    // WorkManager for background notifications when app is closed
+    implementation("androidx.work:work-runtime:2.9.0")
 
 
 

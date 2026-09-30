@@ -34,27 +34,26 @@ public class PriorityClassifier {
     }
 
     public String classify(String description) {
-        if (interpreter == null || labels == null || labels.isEmpty()) {
+        if (interpreter == null || labels == null || labels.isEmpty() || description == null || description.trim().isEmpty()) {
             return "Medium"; // Fallback
         }
 
         try {
-            // The user's snippet suggested this input format: arrayOf(arrayOf("text"))
-            // In Java, that's Object[][] or String[][]
-            String[][] input = {{description}};
+            // Try [1] input shape first, then [1, 1] if that fails
+            Object[] input = new Object[]{description};
             float[][] output = new float[1][labels.size()];
 
-            interpreter.run(input, output);
-
-            Log.d(TAG, "Inference results for: " + description);
-            int outputSize = output[0].length;
-            for (int i = 0; i < outputSize; i++) {
-                String labelStr = (labels != null && i < labels.size()) ? labels.get(i) : "Unknown";
-                Log.d(TAG, labelStr + ": " + output[0][i]);
+            try {
+                interpreter.run(input, output);
+            } catch (Exception e) {
+                Log.w(TAG, "Standard input shape [1] failed, trying [1, 1]: " + e.getMessage());
+                String[][] input2D = {{description}};
+                interpreter.run(input2D, output);
             }
 
+            Log.d(TAG, "Inference results for: " + description);
             int predictedIndex = -1;
-            float maxProb = -1f;
+            float maxProb = 0f; // Use 0f to ensure we have a positive match
             for (int i = 0; i < output[0].length; i++) {
                 if (output[0][i] > maxProb) {
                     maxProb = output[0][i];
@@ -63,10 +62,12 @@ public class PriorityClassifier {
             }
 
             if (predictedIndex == -1) {
+                Log.w(TAG, "No clear prediction (maxProb is 0). Falling back to Medium.");
                 return "Medium";
             }
 
             String label = labels.get(predictedIndex);
+            Log.d(TAG, "Predicted label: " + label + " with confidence " + maxProb);
             
             // Map labels to Report priority format (Capitalized case)
             if ("CRITICAL".equalsIgnoreCase(label) || "HIGH".equalsIgnoreCase(label)) {

@@ -11,12 +11,12 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.campusalert.databinding.ActivityMainBinding;
 import com.example.campusalert.models.UserRole;
+import com.example.campusalert.utils.SecurityUtils;
 import com.example.campusalert.utils.SessionManager;
 import com.example.campusalert.viewmodels.MainViewModel;
 import com.example.campusalert.viewmodels.ReportViewModel;
@@ -31,7 +31,7 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     private static final String TAG = "MainActivity";
     private ActivityMainBinding binding;
@@ -69,7 +69,11 @@ public class MainActivity extends AppCompatActivity {
             // Check if we need to redirect immediately
             if (sessionManager.isLoggedIn() && !getIntent().getBooleanExtra("IS_LOGGING_OUT", false)) {
                 UserRole role = sessionManager.getUserRole();
-                if (role != null) {
+                String email = sessionManager.getUserEmail();
+                if (role == UserRole.STUDENT && !SecurityUtils.isInstitutionalStudentEmail(email)) {
+                    sessionManager.logout();
+                    FirebaseAuth.getInstance().signOut();
+                } else if (role != null) {
                     navigateToDashboard(role.name());
                     return;
                 }
@@ -77,6 +81,11 @@ public class MainActivity extends AppCompatActivity {
 
             binding = ActivityMainBinding.inflate(getLayoutInflater());
             setContentView(binding.getRoot());
+
+            String rememberedEmail = sessionManager.getRememberedEmail();
+            if (rememberedEmail != null && !rememberedEmail.isEmpty() && binding.emailEditText.getText() != null && binding.emailEditText.getText().length() == 0) {
+                binding.emailEditText.setText(rememberedEmail);
+            }
             
             viewModel = new ViewModelProvider(this).get(MainViewModel.class);
             reportViewModel = new ViewModelProvider(this).get(ReportViewModel.class);
@@ -163,8 +172,7 @@ public class MainActivity extends AppCompatActivity {
             if (user != null) {
                 binding.progressBar.setVisibility(View.GONE);
                 sessionManager.createSession(user);
-                String encodedEmail = user.getEmail().replace(".", ",");
-                reportViewModel.updateFcmToken(encodedEmail);
+                reportViewModel.updateFcmToken(user.getEmail());
                 navigateToDashboard(user.getRoleEnum().name());
             }
         });
@@ -172,7 +180,10 @@ public class MainActivity extends AppCompatActivity {
         viewModel.getErrorLiveData().observe(this, errorMessage -> {
             if (errorMessage != null) {
                 binding.progressBar.setVisibility(View.GONE);
-                Toast.makeText(MainActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+                if (mGoogleSignInClient != null) {
+                    mGoogleSignInClient.signOut();
+                }
+                Toast.makeText(MainActivity.this, errorMessage, Toast.LENGTH_LONG).show();
             }
         });
     }

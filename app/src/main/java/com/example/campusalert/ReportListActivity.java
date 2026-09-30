@@ -20,7 +20,7 @@ import com.example.campusalert.viewmodels.ReportListViewModel;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.chip.Chip;
 
-public class ReportListActivity extends AppCompatActivity {
+public class ReportListActivity extends BaseActivity {
 
     private ActivityReportListBinding binding;
     private ReportListViewModel viewModel;

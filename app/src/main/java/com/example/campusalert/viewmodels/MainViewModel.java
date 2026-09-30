@@ -7,9 +7,12 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.campusalert.R;
 import com.example.campusalert.database.AppDatabase;
 import com.example.campusalert.database.ReportRepository;
 import com.example.campusalert.models.User;
+import com.example.campusalert.models.UserRole;
+import com.example.campusalert.utils.SecurityUtils;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
@@ -85,6 +88,15 @@ public class MainViewModel extends AndroidViewModel {
                         user.setRole("STUDENT");
                     }
                     
+                    // Verify that student accounts are using the institutional email ending with sccpag.edu.ph
+                    if (user.getRoleEnum() == UserRole.STUDENT) {
+                        if (!SecurityUtils.isInstitutionalStudentEmail(email)) {
+                            FirebaseAuth.getInstance().signOut();
+                            errorLiveData.postValue(getApplication().getString(R.string.institutional_email_required));
+                            return;
+                        }
+                    }
+
                     finalizeLogin(user);
                 });
     }

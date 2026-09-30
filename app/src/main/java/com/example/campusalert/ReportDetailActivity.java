@@ -1,5 +1,6 @@
 package com.example.campusalert;
 
+import android.app.Dialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -34,7 +35,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReportDetailActivity extends AppCompatActivity {
+public class ReportDetailActivity extends BaseActivity {
     private ActivityReportDetailBinding binding;
     private ReportViewModel reportViewModel;
     private SessionManager sessionManager;
@@ -248,7 +249,7 @@ public class ReportDetailActivity extends AppCompatActivity {
     }
 
     private void showFullImage(String imageStr) {
-        android.app.Dialog dialog = new android.app.Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+        Dialog dialog = new Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
         ImageView imageView = new ImageView(this);
         
         if (imageStr.startsWith("data:image")) {
