@@ -99,7 +99,7 @@ public class ReportSubmissionActivity extends BaseActivity {
     }
 
     private void setupDropdowns() {
-        String[] buildings = {"St. Therese Bldg", "Library", "Law Library", "SCC Gym", "Canteen"};
+        String[] buildings = {"St. Therese Bldg", "Library", "Law Library", "SCC Gym", "Canteen", "SN Bldg", "EB Bldg", "PC Bldg", "RB Bldg", "S Bldg"};
         binding.buildingDropdown.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, buildings));
 
         String[] categories = {"Plumbing", "Electrical", "Furniture", "Facilities", "Security", "Other"};
